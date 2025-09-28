@@ -79,23 +79,23 @@ ms_custom_ops/
 
    ```bash
    # 查看编译选项
-   bash build.sh -h
+   bash scripts/build.sh -h
    
    # 默认编译（Release模式）
-   bash build.sh
+   bash scripts/build.sh
    
    # Debug编译
-   bash build.sh -d
+   bash scripts/build.sh -d
    
    # 编译指定算子
-   bash build.sh -p ${absolute_op_dir_path}
+   bash scripts/build.sh -p ${absolute_op_dir_path}
    
    # 编译指定算子
-   bash build.sh -p ${absolute_op_dir_path}
-   eg. bash build.sh -p /home/ms_custom_ops/ccsrc/ops/ascendc/add,/home/ms_custom_ops/ccsrc/ops/ascendc/add
+   bash scripts/build.sh -p ${absolute_op_dir_path}
+   eg. bash scripts/build.sh -p /home/ms_custom_ops/ccsrc/ops/ascendc/add,/home/ms_custom_ops/ccsrc/ops/ascendc/add
    
    # 指定SOC Verison编译
-   eg. bash build.sh -v ascend910b4
+   eg. bash scripts/build.sh -v ascend910b4
    ```
 
    编译完成后，安装生成的wheel包：

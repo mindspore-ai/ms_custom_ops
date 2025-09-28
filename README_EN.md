@@ -79,23 +79,23 @@ ms_custom_ops/
 
    ```bash
    # View build options
-   bash build.sh -h
+   bash scripts/build.sh -h
    
    # Default build (Release mode)
-   bash build.sh
+   bash scripts/build.sh
    
    # Debug build
-   bash build.sh -d
+   bash scripts/build.sh -d
    
    # Build specified operators
-   bash build.sh -p ${absolute_op_dir_path}
+   bash scripts/build.sh -p ${absolute_op_dir_path}
    
    # Build specified operators
-   bash build.sh -p ${absolute_op_dir_path}
-   eg. bash build.sh -p /home/ms_custom_ops/ccsrc/ops/ascendc/add,/home/ms_custom_ops/ccsrc/ops/ascendc/add
+   bash scripts/build.sh -p ${absolute_op_dir_path}
+   eg. bash scripts/build.sh -p /home/ms_custom_ops/ccsrc/ops/ascendc/add,/home/ms_custom_ops/ccsrc/ops/ascendc/add
    
    # Build with specified SOC Version
-   eg. bash build.sh -v ascend910b4
+   eg. bash scripts/build.sh -v ascend910b4
    ```
 
    After compilation, install the generated wheel package:
