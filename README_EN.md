@@ -16,12 +16,15 @@ MindSpore Custom Operators Extension (ms_custom_ops) is an independent operator 
 ms_custom_ops/
 ├── CMakeLists.txt        # CMake build configuration
 ├── README.md             # Project documentation
+├── README_EN.md          # English project documentation
 ├── OWNERS                # Project maintainers
+├── LICENSE               # Open source license
 ├── requirements.txt      # Python dependencies
 ├── setup.py              # Python package configuration
 ├── version.txt           # Version information
 ├── 3rdparty/             # Third-party dependencies
 ├── cmake/                # CMake build scripts
+├── docs/                 # Documentation resources
 ├── ops/                  # Custom operator kernel source code and integration code
 │   ├── ascendc/          # AscendC operator implementation and integration code
 │   ├── c_api/            # Operators integrated via pre-packaged API calls
@@ -93,6 +96,11 @@ ms_custom_ops/
    
    # Build with specified SOC Version
    eg. bash build.sh -v ascend910b4
+   ```
+
+   After compilation, install the generated wheel package:
+   ```bash
+   pip install dist/*.whl
    ```
 
 4. **Install using setup.py**
