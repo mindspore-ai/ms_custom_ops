@@ -1,0 +1,32 @@
+#operator reshape_and_cache_npd
+reshape_and_cache_npd:
+  args:
+    key:
+      dtype: tensor
+    value:
+      dtype: tensor
+    key_cache:
+      dtype: tensor
+    value_cache:
+      dtype: tensor
+    slot_mapping:
+      dtype: tensor
+    q_seq:
+      dtype: tensor
+    kv_seq:
+      dtype: tensor
+    block_tbl:
+      dtype: tensor
+    cache_mode:
+      dtype: int
+      default: 1
+  args_signature:
+    rw_write: key_cache, value_cache
+    dtype_group: (key, key_cache), (value, value_cache)
+  labels:
+    side_effect_mem: True
+  returns:
+    out_key:
+      dtype: tensor
+    out_value:
+      dtype: tensor

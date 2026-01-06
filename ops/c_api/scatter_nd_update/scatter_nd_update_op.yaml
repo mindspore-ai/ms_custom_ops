@@ -1,0 +1,16 @@
+#operator scatter_nd_update
+scatter_nd_update:
+    args:
+        input:
+            dtype: tensor
+        indices:
+            dtype: tensor
+        updates:
+            dtype: tensor
+    args_signature:
+        rw_write: input
+    labels:
+        side_effect_mem: True
+    returns:
+        fake_out:
+            dtype: tensor

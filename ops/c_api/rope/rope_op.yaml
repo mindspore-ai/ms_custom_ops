@@ -1,0 +1,24 @@
+#operator rope
+rope:
+    args:
+        query:
+            dtype: tensor
+        key:
+            dtype: tensor
+        cos:
+            dtype: tensor
+        sin:
+            dtype: tensor
+        seq_len:
+            dtype: tensor
+        rotary_coeff:
+            dtype: int
+            default: 4
+        cos_format:
+            dtype: int
+            default: 0
+    returns:
+        out_query:
+            dtype: tensor
+        out_key:
+            dtype: tensor

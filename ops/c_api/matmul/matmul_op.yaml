@@ -1,0 +1,27 @@
+#operator mat_mul
+mat_mul:
+  args:
+    x1:
+      dtype: tensor
+    x2:
+      dtype: tensor
+    transpose_a:
+      dtype: bool
+      default: false
+    transpose_b:
+      dtype: bool
+      default: false
+    x1_format:
+      dtype: int
+      default: 0  # 0: ND, 1: FRACTAL_NZ
+    x2_format:
+      dtype: int
+      default: 0  # 0: ND, 1: FRACTAL_NZ
+    output_format:
+      dtype: int
+      default: 0  # 0: ND, 1: FRACTAL_NZ
+  args_signature:
+        dtype_group: (x1, x2)
+  returns:
+    y:
+      dtype: tensor

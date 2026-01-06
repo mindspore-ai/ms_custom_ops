@@ -1,0 +1,12 @@
+|build-in接口|ms_custom_ops接口|变化说明|
+|------------------------------------|-------------------------------------|-----------------------------------|
+| ops.auto_generate.format_cast | [ms_custom_ops.trans_data](../ops/c_api/trans_data/trans_data.md) | 两者均进行ND和NZ的相互转换。format_cast依赖ms内置白名单；trans_data不使用白名单但有使用约束，详见trans_data文档。同一权重只能选用其中一种进行转换，建议网络中统一采用同一种算子，两者不兼容。 |
+| ops.auto_generate.mla | [ms_custom_ops.mla](../ops/c_api/mla/mla_doc.md) | 新增了input_format参数，用于指定输入参数的format |
+| ops.auto_generate.reshape_and_cache| [ms_custom_ops.reshape_and_cache](../ops/c_api/reshape_and_cache/reshape_and_cache.md) | 新增cache_mode参数，用于指定Atlas 训练系列cache的format是ND还是NZ; 新增head_num，cache_mode为NZ的时候必须提供，辅助计算。|
+| ops.moe_init_routing_v2 | [ms_custom_ops.moe_init_routing_v2](../ops/c_api/moe_init_routing_v2/moe_init_routing_v2.md) | 接口一致，仅支持 Atlas 推理系列 |
+|ops.auto_generate.moe_gating_group_topk|[ms_custom_ops.moe_gating_group_topk](../ops/c_api/moe_gating_group_topk/moe_gating_group_topk.md) |接口一致|
+| ops.auto_generate.group_topk | [ms_custom_ops.group_topk](../ops/c_api/group_topk/group_topk_doc.md) | 副作用接口，将不再支持左值输出 |
+| ops.auto_generate.mla_preprocess | [ms_custom_ops.mla_preprocess](../ops/c_api/mla_preprocess/mla_preprocess_doc.md) | 接口一致 |
+| ops.auto_generate.fused_add_topk_div | [ms_custom_ops.fused_add_topk_div](../ops/c_api/fused_add_topk_div/fused_add_topk_div_doc.md) | 接口一致 |
+| ops.auto_generate.paged_cache_load | [ms_custom_ops.paged_cache_load](../ops/c_api/paged_cache_load/paged_cache_load_doc.md) | 新增支持key、value支持不同dtype；取消inplace更新的输出key、value，直接改为输出 |
+| ops.auto_generate.quant_batch_matmul | [ms_custom_ops.quant_batch_matmul](../ops/c_api/quant_batch_matmul/quant_batch_matmul.md) | 新增了x2_format参数，用于指定x2的format; 入参名称`pertokenScaleOptional`修改为`pertoken_scale`; 入参名称`dtype`修改为`output_dtype` |
