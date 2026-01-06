@@ -10,6 +10,7 @@
 1. [fa_update](../ops/c_api/fa_update/fa_update_doc.md)
 1. [flash_attention_encoder](../ops/c_api/flash_attention_encoder/flash_attention_encoder.md)
 1. [fused_add_topk_div](../ops/c_api/fused_add_topk_div/fused_add_topk_div_doc.md)
+1. [fused_add_topk_div_moe](../ops/ascendc/ms_glue/fused_add_topk_div_moe_ms/fused_add_topk_div_moe.md)
 1. [grid_sample](../ops/ascendc/ms_glue/grid_sample_ms/grid_sample.md)
 1. [group_topk](../ops/c_api/group_topk/group_topk_doc.md)
 1. [grouped_matmul](../ops/c_api/grouped_matmul/grouped_matmul_doc.md)
