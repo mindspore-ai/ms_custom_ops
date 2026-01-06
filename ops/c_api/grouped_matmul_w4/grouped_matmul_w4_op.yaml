@@ -1,0 +1,18 @@
+#operator grouped_matmul_w4
+grouped_matmul_w4:
+    args:
+        x:
+            dtype: tensor
+        weight:
+            dtype: tensor
+        group_list:
+            dtype: tensor
+        bias:
+            dtype: tensor
+        x_scale:
+            dtype: tensor
+        weight_scale:
+            dtype: tensor
+    returns:
+        out:
+            dtype: tensor

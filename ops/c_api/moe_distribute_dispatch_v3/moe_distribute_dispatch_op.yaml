@@ -1,0 +1,82 @@
+#operator moe_distribute_dispatch_v3
+moe_distribute_dispatch_v3:
+  args:
+    x:     
+      dtype: tensor
+    expert_ids:  
+      dtype: tensor
+    ep_world_size:
+      dtype: int
+    ep_rank_id:
+      dtype: int
+    moe_expert_num:
+      dtype: int
+    scales:
+      dtype: tensor
+      default: None
+    x_active_mask:  
+      dtype: tensor
+      default: None
+    expert_scales:
+      dtype: tensor
+      default: None
+    elastic_info:
+      dtype: tensor
+      default: None
+    group_ep:       
+      dtype: str
+      default: None
+    group_tp:
+      dtype: str
+      default: None
+    tp_world_size:
+      dtype: int
+      default: 0
+    tp_rank_id:
+      dtype: int
+      default: 0
+    expert_shard_type:
+      dtype: int
+      default: 0
+    shared_expert_num:
+      dtype: int
+      default: 1
+    shared_expert_rank_num:
+      dtype: int
+      default: 0
+    quant_mode:
+      dtype: int
+      default: 0
+    global_bs:
+      dtype: int
+      default: 0
+    expert_token_nums_type:
+      dtype: int
+      default: 1
+    comm_alg:
+      dtype: str
+      default: None
+    zero_expert_num:
+      dtype: int
+      default: 0
+    copy_expert_num:
+      dtype: int
+      default: 0
+    const_expert_num:
+      dtype: int
+      default: 0
+  returns:
+    expand_x:
+      dtype: tensor
+    dynamic_scales:
+      dtype: tensor
+    assist_info_for_combine:
+      dtype: tensor
+    expert_token_nums:
+      dtype: tensor
+    ep_recv_counts:
+      dtype: tensor
+    tp_recv_counts:
+      dtype: tensor
+    expand_scales:
+      dtype: tensor

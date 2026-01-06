@@ -1,0 +1,102 @@
+#operator moe_distribute_combine_v3
+moe_distribute_combine_v3:
+  args:
+    expand_x:
+      dtype: tensor
+    expert_ids:
+      dtype: tensor
+    assist_info_for_combine:
+      dtype: tensor
+    ep_send_counts:
+      dtype: tensor
+    expert_scales:
+      dtype: tensor
+    ep_world_size:
+      dtype: int
+    ep_rank_id:
+      dtype: int
+    moe_expert_num:
+      dtype: int
+    group_ep:
+      dtype: str
+    tp_send_counts:
+      dtype: tensor
+      default: None
+    x_active_mask:
+      dtype: tensor
+      default: None
+    activation_scale:
+      dtype: tensor
+      default: None
+    weight_scale:
+      dtype: tensor
+      default: None
+    group_list:
+      dtype: tensor
+      default: None
+    expand_scales:
+      dtype: tensor
+      default: None
+    shared_expert_x:
+      dtype: tensor
+      default: None
+    elastic_info:
+      dtype: tensor
+      default: None
+    ori_x:
+      dtype: tensor
+      default: None
+    const_expert_alpha1:
+      dtype: tensor
+      default: None
+    const_expert_alpha2:
+      dtype: tensor
+      default: None
+    const_expert_v:
+      dtype: tensor
+      default: None
+    group_tp:
+      dtype: str
+      default: None
+    tp_world_size:
+      dtype: int
+      default: 0
+    tp_rank_id:
+      dtype: int
+      default: 0
+    expert_shard_type:
+      dtype: int
+      default: 0
+    shared_expert_num:
+      dtype: int
+      default: 1
+    shared_expert_rank_num:
+      dtype: int
+      default: 0
+    global_bs:
+      dtype: int
+      default: 0
+    out_dtype:
+      dtype: int
+      default: 0
+    common_quant_mode:
+      dtype: int
+      default: 0
+    group_list_type:
+      dtype: int
+      default: 0
+    comm_alg:
+      dtype: str
+      default: None
+    zero_expert_num:
+      dtype: int
+      default: 0
+    copy_expert_num:
+      dtype: int
+      default: 0
+    const_expert_num:
+      dtype: int
+      default: 0    
+  returns:
+    x_out:
+      dtype: tensor

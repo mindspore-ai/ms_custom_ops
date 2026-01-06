@@ -1,0 +1,88 @@
+#operator paged_attention
+paged_attention:
+  args:
+    query:
+      dtype: tensor
+    key_cache:
+      dtype: tensor
+    value_cache:
+      dtype: tensor
+    block_tables:
+      dtype: tensor
+    context_lens:
+      dtype: tensor
+    attn_mask:
+      dtype: tensor
+      default: None
+    batch_run_status:
+      dtype: tensor
+      default: None
+    k_descale:
+      dtype: tensor
+      default: None
+    k_offset:
+      dtype: tensor
+      default: None
+    v_descale:
+      dtype: tensor
+      default: None
+    v_offset:
+      dtype: tensor
+      default: None
+    razor_offset:
+      dtype: tensor
+      default: None
+    p_scale:
+      dtype: tensor
+      default: None
+    log_n:
+      dtype: tensor
+      default: None
+    q_seq_lens:
+      dtype: tensor
+      default: None
+    q_head_num:
+      dtype: int
+      default: 0
+    qk_scale:
+      dtype: float
+      default: 1.0
+    kv_head_num:
+      dtype: int
+      default: 0
+    mask_type:
+      dtype: int
+      default: 0
+    batch_run_status_enable:
+      dtype: bool
+      default: False
+    quant_type:
+      dtype: int
+      default: 0
+    out_data_type:
+      dtype: int
+      default: -1
+    has_quant_offset:
+      dtype: bool
+      default: False
+    compress_type:
+      dtype: int
+      default: 0
+    calc_type:
+      dtype: int
+      default: 0
+    scale_type:
+      dtype: int
+      default: 0 
+    input_layout:
+      dtype: int
+      default: 0 
+    mla_v_dim:
+      dtype: int
+      default: 0
+    input_format:
+      dtype: int
+      default: 0
+  returns:
+    attention_out:
+      dtype: tensor
