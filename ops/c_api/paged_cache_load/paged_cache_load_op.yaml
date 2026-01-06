@@ -1,0 +1,28 @@
+#operator paged_cache_load
+paged_cache_load:
+  args:
+    key_cache:
+      dtype: tensor
+    value_cache:
+      dtype: tensor
+    block_tables:
+      dtype: tensor
+    seq_lens:
+      dtype: tensor
+    seq_starts:
+      dtype: tensor
+      default: None
+    kv_cache_cfg:
+      dtype: int
+      default: 0
+    is_seq_lens_cumsum_type:
+      dtype: bool
+      default: false
+    has_seq_starts:
+      dtype: bool
+      default: false
+  returns:
+    key_out:
+      dtype: tensor
+    value_out:
+      dtype: tensor

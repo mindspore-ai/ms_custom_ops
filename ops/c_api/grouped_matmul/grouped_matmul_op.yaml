@@ -1,0 +1,33 @@
+#operator grouped_matmul
+grouped_matmul:
+    args:
+        x:
+            dtype: tensor
+        weight:
+            dtype: tensor
+        group_list:
+            dtype: tensor
+        bias:
+            dtype: tensor
+            default: None
+        scale:
+            dtype: tensor
+            default: None
+        per_token_scale:
+            dtype: tensor
+            default: None
+        antiquant_scale:
+            dtype: tensor
+            default: None
+        transpose_a:
+            dtype: bool
+            default: False
+        transpose_b:
+            dtype: bool
+            default: False
+        x_format:
+            dtype: int
+            default: 0  # 0: ND, 1: FRACTAL_NZ
+    returns:
+        out:
+            dtype: tensor

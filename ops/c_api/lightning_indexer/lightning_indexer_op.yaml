@@ -1,0 +1,33 @@
+#operator lightning_indexer
+lightning_indexer:
+    args:
+        query:
+            dtype: tensor
+        key:
+            dtype: tensor
+        weights:
+            dtype: tensor
+        actual_seq_lengths_query:
+            dtype: tensor
+            default: None
+        actual_seq_lengths_key:
+            dtype: tensor
+            default: None
+        block_table:
+            dtype: tensor
+            default: None
+        layout_query:
+            dtype: int
+            default: 0
+        layout_key:
+            dtype: int
+            default: 0
+        sparse_count:
+            dtype: int
+            default: 2048
+        sparse_mode:
+            dtype: int
+            default: 3
+    returns:
+        sparse_indices:
+            dtype: tensor

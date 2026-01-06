@@ -1,0 +1,71 @@
+#operator flash_attention_encoder
+flash_attention_encoder:
+  args:
+    query:
+      dtype: tensor
+    key:
+      dtype: tensor
+    value:
+      dtype: tensor
+    layer_id:
+      dtype: tensor
+      default: None
+    mask:
+      dtype: tensor
+      default: None
+    alibi_coeff:
+      dtype: tensor
+      default: None
+    deq_scale_qk:
+      dtype: tensor
+      default: None
+    deq_offset_qk:
+      dtype: tensor
+      default: None
+    deq_scale_pv:
+      dtype: tensor
+      default: None
+    deq_offset_pv:
+      dtype: tensor
+      default: None
+    quant_p:
+      dtype: tensor
+      default: None
+    logN:
+      dtype: tensor
+      default: None
+    q_seq_len:
+      dtype: tensor
+      default: None
+    kv_seq_len:
+      dtype: tensor
+      default: None
+    head_num:
+      dtype: int
+      default: 0
+    scale_value:
+      dtype: float
+      default: 1.0
+    kv_head_num:
+      dtype: int
+      default: 0
+    mask_type:
+      dtype: int
+      default: 0
+    kernel_type:
+      dtype: int
+      default: 0
+    window_size:
+      dtype: int
+      default: 0
+    cache_type:
+      dtype: int
+      default: 0
+    input_format:
+      dtype: int
+      default: 0
+  returns:
+    attention_out:
+      dtype: tensor
+
+

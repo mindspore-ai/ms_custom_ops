@@ -1,0 +1,28 @@
+#operator moe_init_routing_v2
+moe_init_routing_v2:
+  args:
+    x:
+      dtype: tensor
+    expert_idx:
+      dtype: tensor
+    active_num:
+      dtype: int
+    expert_capacity:
+      dtype: int
+    expert_num:
+      dtype: int
+    drop_pad_mode:
+      dtype: int
+    expert_tokens_count_or_cumsum_flag:
+      dtype: int
+    expert_tokens_before_capacity_flag:
+      dtype: bool
+  returns:
+    expanded_x:
+      dtype: tensor
+    expanded_row_idx:
+      dtype: tensor
+    expert_tokens_count_or_cumsum:
+      dtype: tensor
+    expert_tokens_before_capacity:
+      dtype: tensor

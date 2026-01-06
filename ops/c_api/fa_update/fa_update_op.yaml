@@ -1,0 +1,16 @@
+#operator fa_update
+fa_update:
+  args:
+    lse:
+      dtype: tensor
+    local_out:
+      dtype: tensor
+    fa_update_type:
+      dtype: int
+      default: 0
+    sp:
+      dtype: int
+      default: 1
+  returns:
+    output:
+      dtype: tensor
