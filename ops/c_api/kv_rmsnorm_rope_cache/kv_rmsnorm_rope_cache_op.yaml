@@ -1,0 +1,47 @@
+#operator kv_rmsnorm_rope_cache
+kv_rmsnorm_rope_cache:
+    args:
+        kv:
+            dtype: tensor
+        gamma:
+            dtype: tensor
+        cos:
+            dtype: tensor
+        sin:
+            dtype: tensor
+        index:
+            dtype: tensor
+        k_cache:
+            dtype: tensor
+        ckv_cache:
+          dtype: tensor
+        k_rope_scale:
+          dtype: tensor
+          default: None
+        c_kv_scale:
+          dtype: tensor
+          default: None
+        k_rope_offset:
+          dtype: tensor
+          default: None
+        c_kv_offset:
+          dtype: tensor
+          default: None
+        epsilon:
+          dtype: float
+          default: 1e-5
+        cache_mode:
+          dtype: int
+          default: 0
+        is_output_kv:
+          dtype: Bool
+          default: False
+    args_signature:
+        rw_write: k_cache, ckv_cache
+    labels:
+        side_effect_mem: True
+    returns:
+        k_rope_out:
+            dtype: tensor
+        c_kv_out:
+            dtype: tensor

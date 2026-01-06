@@ -1,0 +1,18 @@
+# operator moe_token_unpermute
+moe_token_unpermute:
+  args:
+    permuted_tokens:
+      dtype: tensor
+    sorted_indices:
+      dtype: tensor
+    probs:
+      dtype: tensor
+    padded_mode:
+      dtype: Bool
+      default: False
+    restore_shape:
+      dtype: tuple[int]
+      default: None
+  returns:
+    unpermuted_tokens:
+      dtype: tensor
