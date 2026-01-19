@@ -1,0 +1,66 @@
+#operator sparse_attention_score
+sparse_attention_score:
+  args:
+    query:
+      dtype: tensor
+    key:
+      dtype: tensor
+    value:
+      dtype: tensor
+    real_shift_optional:
+      dtype: tensor
+    drop_mask_optional:
+      dtype: tensor
+    padding_mask_optional:
+      dtype: tensor
+    atten_mask_optional:
+      dtype: tensor
+    prefix_optional:
+      dtype: tensor
+    select_block_idx_optional:
+      dtype: tensor
+    scale_value_optional:
+      dtype: float
+    keep_prob_optional:
+      dtype: float
+      default: 1.0
+    pre_tokens_optional:
+      dtype: int
+      default: 2147483647
+    next_tokens_optional:
+      dtype: int
+      default: 2147483647
+    head_num:
+      dtype: int
+      default: 1
+    input_layout:
+      dtype: str
+      default: '"BNSD"'
+    inner_precise_optional:
+      dtype: int
+      default: 0
+    sparse_mode_optional:
+      dtype: int
+      default: 2
+    select_block_len_optional:
+      dtype: int
+      default: 16
+    softmax_max_out:
+      dtype: tensor
+      default: None
+    softmax_sum_out:
+      dtype: tensor
+      default: None
+    softmax_out_out:
+      dtype: tensor
+      default: None
+    attention_out_out:
+      dtype: tensor
+      default: None
+  args_signature:
+    rw_write: softmax_max_out, softmax_sum_out, softmax_out_out, attention_out_out
+  labels:
+    side_effect_mem: True
+  returns:
+    fake_out:
+      dtype: tensor
