@@ -131,7 +131,10 @@ def cpu_sparse_flash_attention(
                 y[batch, n2_idx * g: (n2_idx + 1) * g, s1_idx, :] = mm2_res
     return np.transpose(y, axes=(0, 2, 1, 3))
 
-
+@pytest.mark.skip(
+    reason="Currently a custom integration. 8.5 CANN already supports this operator, "
+    "need to re-modify the integration code"
+)
 @pytest.mark.level0
 @pytest.mark.env_onecard
 @pytest.mark.platform_ascend910b
@@ -189,6 +192,10 @@ def test_sfa(graph_mode):
     assert true_ratio > 0.99
 
 
+@pytest.mark.skip(
+    reason="Currently a custom integration. 8.5 CANN already supports this operator, "
+    "need to re-modify the integration code"
+)
 @pytest.mark.level0
 @pytest.mark.env_onecard
 @pytest.mark.platform_ascend910b

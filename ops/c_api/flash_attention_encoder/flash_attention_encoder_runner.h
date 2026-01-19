@@ -26,7 +26,6 @@
 #include "ops/framework/ms_kernels_internal/pyboost/internal_pyboost_runner.h"
 #include "ops/c_api/utils/attention_utils.h"
 #include "ops/c_api/flash_attention_encoder/flash_attention_encoder.h"
-#include "mindspore/core/include/utils/log_adapter.h"
 
 namespace ms_custom_ops {
 class FlashAttentionEncoderRunner : public InternalPyboostRunner {

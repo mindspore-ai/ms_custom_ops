@@ -19,15 +19,6 @@
 #include <vector>
 
 #include "pass/add_rms_norm_fusion/add_rms_norm_fusion_pass.h"
-#include "mindspore/ccsrc/include/backend/optimizer/pass.h"
-#include "mindspore/ccsrc/include/backend/optimizer/pattern_to_pattern.h"
-#include "mindspore/ccsrc/include/common/utils/anfalgo.h"
-#include "mindspore/core/include/utils/log_adapter.h"
-#include "mindspore/ccsrc/include/backend/anf_runtime_algorithm.h"
-#include "mindspore/ccsrc/include/backend/optimizer/helper.h"
-#include "mindspore/core/include/ir/primitive.h"
-#include "mindspore/core/include/ir/anf.h"
-#include "mindspore/core/include/ir/dtype/type_id.h"
 
 namespace mindspore {
 namespace opt {

@@ -48,8 +48,8 @@ class ReshapeAndCache {
     blk_tbl_dim1_ = in_tiling_.GetValue(10);
     page_size_n_ = page_size_ * hidden_size_;
     local_buf_n_ = ub_size_ / 2 / sizeof(Dtype);
-    in_local_ping_ = ub_allocator_.Alloc<Dtype>(local_buf_n_);
-    in_local_pong_ = ub_allocator_.Alloc<Dtype>(local_buf_n_);
+    in_local_ping_ = ub_allocator_.Alloc<Dtype>(static_cast<uint32_t>(local_buf_n_));
+    in_local_pong_ = ub_allocator_.Alloc<Dtype>(static_cast<uint32_t>(local_buf_n_));
     local_buf_n_floor_ = local_buf_n_ / hidden_size_ * hidden_size_;  // size of buffer for full tokens
     local_buf_tokens_n_ = local_buf_n_floor_ / hidden_size_;          // number of tokens
     in_kv_seq_.SetGlobalBuffer(reinterpret_cast<__gm__ uint32_t *>(tiling) + 32);

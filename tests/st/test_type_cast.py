@@ -14,11 +14,25 @@
 # ============================================================================
 """ tests_custom_pyboost_ascend """
 
+from functools import wraps
+import pytest
 import numpy as np
 import mindspore as ms
 from mindspore import Tensor, context
-import pytest
 import ms_custom_ops
+
+def jit(func):
+    @wraps(func)
+    def decorator(*args, **kwargs):
+        if context.get_context("mode") == context.PYNATIVE_MODE:
+            return func(*args, **kwargs)
+        return ms.jit(func, jit_level="O0", infer_boost="on")(*args, **kwargs)
+    return decorator
+
+class TypeCast(ms.nn.Cell):
+    @jit
+    def construct(self, x, dtype):
+        return ms_custom_ops.type_cast(x, dtype)
 
 
 @pytest.mark.level0
@@ -32,19 +46,15 @@ def test_custom_type_cast_int8_to_qint4x2(exec_mode):
     Expectation: Assert that results are consistent with expected.
     """
     ms.set_device("Ascend")
-
-    def type_cast_custom(x, dtype):
-        return ms_custom_ops.type_cast(x, dtype)
-
-    if exec_mode == context.GRAPH_MODE:
-        type_cast_custom = ms.jit(type_cast_custom, jit_level="O0", infer_boost="on")
+    ms.set_context(mode=exec_mode)
+    type_cast = TypeCast()
 
     x_np = np.random.randint(-5, 5, size=(32, 32)).astype(np.int8)
     x_int4_np = x_np.reshape(-1) & 0x000F
     x_int4_np = x_int4_np[0::2] | (x_int4_np[1::2] << 4)
     x_int4_np = x_int4_np.reshape(32, 16)
     x_int8 = Tensor(x_int4_np, ms.int8)
-    x_int4 = type_cast_custom(x_int8, ms.qint4x2)
+    x_int4 = type_cast(x_int8, ms.qint4x2)
 
     assert x_int8.dtype == ms.int8
     assert x_int4.dtype == ms.qint4x2
@@ -63,19 +73,15 @@ def test_custom_type_cast_qint4x2_to_int8(exec_mode):
     Expectation: Assert that results are consistent with expected.
     """
     ms.set_device("Ascend")
-
-    def type_cast_custom(x, dtype):
-        return ms_custom_ops.type_cast(x, dtype)
-
-    if exec_mode == context.GRAPH_MODE:
-        type_cast_custom = ms.jit(type_cast_custom)
+    ms.set_context(mode=exec_mode)
+    type_cast = TypeCast()
 
     x_np = np.random.randint(-5, 5, size=(16, 64)).astype(np.int8)
     x_int4_np = x_np.reshape(-1) & 0x000F
     x_int4_np = x_int4_np[0::2] | (x_int4_np[1::2] << 4)
     x_int4_np = x_int4_np.reshape(16, 32)
     x_int4 = Tensor(x_int4_np, ms.qint4x2)
-    x_int8 = type_cast_custom(x_int4, ms.int8)
+    x_int8 = type_cast(x_int4, ms.int8)
 
     assert x_int8.dtype == ms.int8
     assert x_int4.dtype == ms.qint4x2

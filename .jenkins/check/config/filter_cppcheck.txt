@@ -1,0 +1,2 @@
+"ms_custom_ops/ops/ascendc/aclnn_src/grid_sample_ms/op_kernel/grid_sample_ms.cpp" ""
+"ms_custom_ops/ops/ascendc/aclnn_src/unpad_fa_npd/op_host/unpad_fa_npd_tiling.cpp" "unreadVariable"

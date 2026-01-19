@@ -16,10 +16,6 @@
 #ifndef MINDSPORE_CUSTOM_PASS_ADD_RMS_NORM_FUSION_PASS_H_
 #define MINDSPORE_CUSTOM_PASS_ADD_RMS_NORM_FUSION_PASS_H_
 
-#include "mindspore/ccsrc/include/backend/optimizer/pass.h"
-#include "mindspore/ccsrc/include/backend/optimizer/pattern_to_pattern.h"
-#include "mindspore/core/include/utils/log_adapter.h"
-
 #include "pass/pass_registry.h"
 
 namespace mindspore {

@@ -18,8 +18,6 @@
 
 #include <string>
 #include "pass/pass_registry.h"
-#include "include/backend/optimizer/optimizer.h"
-#include "include/backend/visible.h"
 
 namespace mindspore {
 namespace opt {

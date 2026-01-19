@@ -17,9 +17,6 @@
 #include <algorithm>
 #include <vector>
 
-#include "mindspore/core/include/ops/ops_func_impl/op_func_impl.h"
-#include "mindspore/ops/ops_utils/op_utils.h"
-
 namespace ms_custom_ops {
 class OPS_API CustomPagedCacheLoadOpFuncImpl : public OpFuncImpl {
  public:

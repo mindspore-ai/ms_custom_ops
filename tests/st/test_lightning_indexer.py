@@ -148,6 +148,10 @@ def run_ms_lightning_indexer(query_tensor, key_tensor, weights_tensor, q_lens_te
                                            k_lens_tensor, block_table_tensor, layout_query=layout_query, 
                                            layout_key=layout_key, sparse_count=sparse_count, sparse_mode=sparse_mode)
 
+@pytest.mark.skip(
+    reason="Currently a custom integration. 8.5 CANN already supports this operator, "
+    "need to re-modify the integration code"
+)
 @pytest.mark.level0
 @pytest.mark.env_onecard
 @pytest.mark.platform_ascend910b
@@ -213,7 +217,10 @@ def test_bsnd_lightning_indexer(graph_mode):
     assert np.allclose(npu_out, std_out, 0.0001, 0.0001)
 
 
-
+@pytest.mark.skip(
+    reason="Currently a custom integration. 8.5 CANN already supports this operator, "
+    "need to re-modify the integration code"
+)
 @pytest.mark.level0
 @pytest.mark.env_onecard
 @pytest.mark.platform_ascend910b

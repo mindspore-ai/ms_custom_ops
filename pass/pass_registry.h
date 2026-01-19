@@ -21,7 +21,7 @@
 #include <functional>
 #include <string>
 #include <map>
-#include "include/backend/optimizer/pass.h"
+#include "mindspore/include/custom_pass_api.h"
 
 namespace mindspore {
 namespace opt {

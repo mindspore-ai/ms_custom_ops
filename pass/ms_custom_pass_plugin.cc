@@ -18,7 +18,6 @@
 #include <vector>
 #include <algorithm>
 
-#include "mindspore/core/include/utils/log_adapter.h"
 #include "pass/pass_registry.h"
 
 // Compile-time log: Display HashMap type
@@ -39,7 +38,7 @@
 #endif
 
 // Include MindSpore pass plugin interface
-#include "mindspore/ccsrc/backend/common/custom_pass/custom_pass_plugin.h"
+#include "mindspore/include/custom_pass_api.h"
 
 namespace mindspore {
 namespace opt {

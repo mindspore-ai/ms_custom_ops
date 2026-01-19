@@ -20,7 +20,6 @@
 #include <map>
 #include <mutex>
 #include "mindspore/include/custom_op_api.h"
-#include "mindspore/core/include/utils/ms_context.h"
 #include "ops/framework/aclnn/graphmode/aclnn_kernel_mod.h"
 #include "ops/framework/utils.h"
 #include "ops/c_api/utils/common_utils.h"
