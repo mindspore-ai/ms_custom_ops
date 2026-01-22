@@ -16,13 +16,6 @@
 #include "pass/convert_tuple_input_to_dynamic_input/convert_tuple_input_to_dynamic_input.h"
 #include <memory>
 #include <unordered_set>
-#include "mindspore/ops/op_def/array_ops.h"
-#include "mindspore/ops/op_def/structure_ops.h"
-#include "mindspore/ops/op_def/nn_ops.h"
-#include "mindspore/ops/op_def/framework_ops.h"
-#include "mindspore/ccsrc/include/backend/optimizer/helper.h"
-#include "mindspore/ccsrc/include/common/utils/anfalgo.h"
-#include "mindspore/ccsrc/include/backend/anf_runtime_algorithm.h"
 
 namespace mindspore {
 namespace opt {

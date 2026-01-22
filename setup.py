@@ -177,19 +177,46 @@ version = get_version()
 
 
 def _get_ascend_home_path():
-    return os.environ.get("ASCEND_HOME_PATH", "/usr/local/Ascend/ascend-toolkit/latest")
+    """Get the Ascend home installation path."""
+    if "ASCEND_HOME_PATH" in os.environ:
+        return os.environ["ASCEND_HOME_PATH"]
+
+    # Check default paths for compatibility
+    defaults = ["/usr/local/Ascend/cann", "/usr/local/Ascend/ascend-toolkit/latest"]
+    for path in defaults:
+        if os.path.exists(path):
+            return path
+
+    return defaults[0]
 
 
 def _get_ascend_env_path():
-    env_script_path = os.path.realpath(
-        os.path.join(_get_ascend_home_path(), "..", "set_env.sh")
+    """Locate the set_env.sh file for Ascend environment setup.
+
+    This function searches for 'set_env.sh' in the Ascend installation directory and its parent.
+    Returns the full file path if found, otherwise raises a ValueError.
+
+    Returns:
+        str: Path to the set_env.sh script.
+
+    Raises:
+        ValueError: If set_env.sh cannot be found in expected locations.
+    """
+    ascend_home = _get_ascend_home_path()
+    candidates = [
+        os.path.join(ascend_home, "set_env.sh"),
+        os.path.join(ascend_home, "..", "set_env.sh"),
+    ]
+
+    for candidate in candidates:
+        env_script_path = os.path.realpath(candidate)
+        if os.path.exists(env_script_path):
+            return env_script_path
+
+    raise ValueError(
+        f"The file 'set_env.sh' is not found in '{ascend_home}' or its parent directory. "
+        "Please make sure environment variable 'ASCEND_HOME_PATH' is set correctly."
     )
-    if not os.path.exists(env_script_path):
-        raise ValueError(
-            f"The file '{env_script_path}' is not found, "
-            "please make sure environment variable 'ASCEND_HOME_PATH' is set correctly."
-        )
-    return env_script_path
 
 
 def generate_docs():
@@ -287,7 +314,7 @@ class CustomBuildExt(build_ext):
         if os.getenv("CMAKE_THREAD_NUM", None):
             self.compile_cores = int(os.getenv("CMAKE_THREAD_NUM"))
         else:
-            self.compile_cores = max(1, available_cores // 2)
+            self.compile_cores = min(8, max(1, available_cores // 2))
 
         logger.info(
             "Available CPU cores: %s, using %s cores for compilation",
@@ -629,7 +656,6 @@ setup(
     url="https://gitee.com/mindspore/ms_custom_ops",
     project_urls={
         "Homepage": "https://gitee.com/mindspore/ms_custom_ops",
-        "Documentation": "",
     },
     classifiers=[
         "Programming Language :: Python :: 3.9",

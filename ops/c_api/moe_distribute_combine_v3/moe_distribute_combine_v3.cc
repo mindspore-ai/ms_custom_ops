@@ -23,7 +23,6 @@
 #include "ops/framework/utils.h"
 #include "ops/c_api/utils/common_utils.h"
 #include "ops/c_api/utils/check_utils.h"
-#include "mindspore/ops/kernel/ascend/acl_ir/op_api_util.h"
 
 namespace ms_custom_ops {
 enum class MoeDistributeCombineInputIndex : size_t {

@@ -24,7 +24,7 @@
 
 #include "ops/framework/ms_kernels_internal/tiling_mem_mgr.h"
 #include "mindspore/include/custom_op_api.h"
-#include "internal.h"
+#include "include/internal.h"
 
 namespace ms_custom_ops {
 using namespace mindspore;
@@ -87,7 +87,6 @@ void GatherHash(mindspore::kernel::KernelTensor *);
 void GatherHash(const std::pair<mindspore::kernel::KernelTensor *, bool> &);
 void GatherHash(const std::vector<mindspore::kernel::KernelTensor *> &);
 
-void GatherHash(const device::DeviceAddressPtr &);
 void GatherHash(const mindspore::tensor::TensorPtr &);
 void GatherHash(const std::optional<tensor::TensorPtr> &);
 void GatherHash(const std::vector<tensor::TensorPtr> &);

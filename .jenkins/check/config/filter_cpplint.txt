@@ -1,0 +1,13 @@
+# ms_custom_ops
+"ms_custom_ops/ops/ascendc/aclnn_src/apply_rotary_pos_emb_ms/op_kernel" "build/include_subdir"
+"ms_custom_ops/ops/ascendc/aclnn_src/apply_rotary_pos_emb_ms/op_host" "build/include_subdir"
+"ms_custom_ops/ops/ascendc/aclnn_src/unpad_fa_npd/op_kernel" "build/include_subdir"
+"ms_custom_ops/ops/ascendc/aclnn_src/unpad_fa_npd/op_host" "build/include_subdir"
+"ms_custom_ops/ops/ascendc/aclnn_src/unpad_fa_npd/op_host/unpad_fa_npd_comm.h" "build/namespaces_headers"
+"ms_custom_ops/ops/ascendc/aclnn_src/reshape_and_cache_npd/op_kernel" "build/include_subdir"
+"ms_custom_ops/ops/ascendc/aclnn_src/reshape_and_cache_npd/op_host" "build/include_subdir"
+"ms_custom_ops/ops/ascendc/aclnn_src/reshape_and_cache_npd/op_host/reshape_and_cache_npd_comm.h" "build/namespaces_headers"
+"ms_custom_ops/ops/ascendc/aclnn_src/op_kernel_common/asd" "build/include_subdir"
+"ms_custom_ops/ops/ascendc/aclnn_src/grid_sample_ms/op_host/grid_sample_ms_comm.h" "build/namespaces_headers"
+"ms_custom_ops/ops/framework/ms_kernels_internal/pyboost/internal_pyboost_runner.h"  "build/include_subdir"
+"ms_custom_ops/ops/framework/ms_kernels_internal/internal_tiling_cache.h" "build/namespaces"

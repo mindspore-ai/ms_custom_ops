@@ -121,9 +121,7 @@ class TypeCastRunner : public InternalPyboostRunner {
 
   void _PrepareDeviceAddress() override {
     PyboostRunner::_PrepareDeviceAddress();
-    auto output_device_address =
-      std::dynamic_pointer_cast<device::DeviceAddress>(_outputs_[0].tensor()->device_address());
-    output_device_address->set_format(_inputs_[0].format());
+    _outputs_[0].tensor()->set_format(_inputs_[0].tensor()->format());
   }
 };
 
