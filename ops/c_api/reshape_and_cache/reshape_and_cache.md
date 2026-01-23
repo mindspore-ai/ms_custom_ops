@@ -8,8 +8,8 @@ reshape_and_cache算子用于将key和value张量重塑并缓存到指定的cach
 
 | Name                   | DType                             | Shape                                                                                                                   | Optional | Inplace | Format | Description                    |
 |------------------------|-----------------------------------|-------------------------------------------------------------------------------------------------------------------------|----------|---------|--------|--------------------------------|
-| key                    | Tensor[float16/bfloat16/int8]     | (num_tokens, num_head, head_dim)                                                                                        | No       | No      | ND     | key 张量                       |
-| value                  | Tensor[float16/bfloat16/int8]     | (num_tokens, num_head, head_dim)                                                                                        | Yes      | No      | ND     | value 张量                     |
+| key                    | Tensor[float16/bfloat16/int8]     | (num_tokens, hidden_size) or (batch_size, seq_len, hidden_size)                                                         | No       | No      | ND     | key 张量                       |
+| value                  | Tensor[float16/bfloat16/int8]     | (num_tokens, hidden_size) or (batch_size, seq_len, hidden_size)                                                         | Yes      | No      | ND     | value 张量                     |
 | key_cache              | Tensor[float16/bfloat16/int8]     | ND: (num_blocks, block_size, num_head, head_dim)<br>NZ: host_shape:((num_blocks, block_size, num_head * head_dim) <br> device_shape: (num_blocks, block_size, num_head * head_dim//16, 16, 16) [fp16/bf16]<br>(num_blocks, block_size, num_head * head_dim//32, 32, 32) [int8] | No       | Yes     | ND/NZ  | key_cache 张量，同时作为输出。                 |
 | value_cache            | Tensor[float16/bfloat16/int8]     | ND: (num_blocks, block_size, num_head, head_dim)<br>NZ: host_shape:((num_blocks, block_size, num_head * head_dim) <br> device_shape: (num_blocks, block_size, num_head * head_dim//16, 16, 16) [fp16/bf16]<br>(num_blocks, block_size, num_head * head_dim//32, 32, 32) [int8]| Yes      | Yes     | ND/NZ  | value_cache 张量，同时作为输出。               |
 | slot_mapping           | Tensor[int32]                      | (num_tokens,)                                                                                                           | No       | No      | ND     | slot_mapping 张量              |
@@ -25,8 +25,8 @@ import mindspore as ms
 import ms_custom_ops
 
 # 创建输入张量
-key = ms.Tensor(np.random.rand(128, 32, 64), ms.float16)
-value = ms.Tensor(np.random.rand(128, 32, 64), ms.float16)
+key = ms.Tensor(np.random.rand(128, 1, 2048), ms.float16)
+value = ms.Tensor(np.random.rand(128, 1, 2048), ms.float16)
 key_cache = ms.Tensor(np.random.rand(1024, 16, 32, 64), ms.float16)
 value_cache = ms.Tensor(np.random.rand(1024, 16, 32, 64), ms.float16)
 slot_mapping = ms.Tensor(np.arange(128), ms.int32)
