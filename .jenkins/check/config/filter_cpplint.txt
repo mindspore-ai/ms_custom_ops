@@ -1,0 +1,2 @@
+"ms_custom_ops/ops/c_api/scatter_nd_update/scatter_nd_update.cc"    "build/namespaces"
+"ms_custom_ops/ops/c_api/kv_rmsnorm_rope_cache/kv_rmsnorm_rope_cache.cc" "build/namespace"
