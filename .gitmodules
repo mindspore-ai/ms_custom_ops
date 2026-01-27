@@ -1,0 +1,3 @@
+[submodule "3rdparty/cann-recipes-infer"]
+	path = 3rdparty/cann-recipes-infer
+	url = https://gitcode.com/cann/cann-recipes-infer.git
