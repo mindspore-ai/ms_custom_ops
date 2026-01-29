@@ -49,8 +49,8 @@ class OPS_API QuantBatchMatmulCustomOpFuncImpl : public OpFuncImpl {
     }
     bool transpose_x1 = input_infos[kQbmmInputTransposeX1]->GetScalarValueWithCheck<bool>();
     bool transpose_x2 = input_infos[kQbmmInputTransposeX2]->GetScalarValueWithCheck<bool>();
-    ShapeVector out_shape = BatchMatMulMakeShape(x1_shape, x2_shape, transpose_x1, transpose_x2,
-                                                 kQbmmMatSize, "QuantBatchMatmul");
+    ShapeVector out_shape =
+      BatchMatMulMakeShape(x1_shape, x2_shape, transpose_x1, transpose_x2, kQbmmMatSize, "QuantBatchMatmul");
     return {out_shape};
   }
 
@@ -129,14 +129,14 @@ ms::Tensor quant_batch_matmul_custom(const ms::Tensor &x1, const ms::Tensor &x2,
                                      bool transpose_x2, const std::string &x2_format, const int64_t output_dtype) {
   auto x1_shape = x1.shape();
   auto x2_shape = x2.shape();
-  auto output_shape = BatchMatMulMakeShape(x1_shape, x2_shape, transpose_x1, transpose_x2,
-                                           kQbmmMatSize, "QuantBatchMatmul");
+  auto output_shape =
+    BatchMatMulMakeShape(x1_shape, x2_shape, transpose_x1, transpose_x2, kQbmmMatSize, "QuantBatchMatmul");
   if (x2_format == kFractalNzFormat) {
     x2.set_format(x2_format);
     auto storage_info = GetNZFormatStorageInfo(x2_shape, x2.data_type());
     MS_EXCEPTION_IF_NULL(x2.tensor());
     MS_EXCEPTION_IF_NULL(x2.tensor()->device_address());
-    x2.tensor()->device_address()->set_tensor_storage_info(storage_info);
+    x2.tensor()->set_storage_info(storage_info);
   }
   TypeId out_dtype = static_cast<TypeId>(output_dtype);
   auto out = ms::Tensor(out_dtype, output_shape);

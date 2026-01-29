@@ -325,7 +325,7 @@ std::vector<ms::Tensor> grouped_matmul_v4_cops_custom(
       auto storage_info = GetNZFormatStorageInfo(w_tensor.shape(), w_tensor.data_type());
       MS_EXCEPTION_IF_NULL(w_tensor.tensor());
       MS_EXCEPTION_IF_NULL(w_tensor.tensor()->device_address());
-      w_tensor.tensor()->device_address()->set_tensor_storage_info(storage_info);
+      w_tensor.tensor()->set_storage_info(storage_info);
     }
   }
 
