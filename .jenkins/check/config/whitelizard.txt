@@ -1,0 +1,2 @@
+ms_custom_ops/ops/ascendc/grid_sample/op_kernel/grid_sample_ms.cpp:KernelGridSampleMS::grid_sample_0_kernel
+ms_custom_ops/ops/ascendc/grid_sample/op_kernel/gridsample_nhwc.py:grid_sample
