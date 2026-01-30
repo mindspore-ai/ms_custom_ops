@@ -296,6 +296,9 @@ if [ "${PARENT_JOB}" == "false" ]; then
             CPU_NUM="${OPS_CPU_NUMBER}"
         fi
     fi
+    if [ ${CPU_NUM} -gt 40 ]; then
+        CPU_NUM=40
+    fi
     JOB_NUM="-j${CPU_NUM}"
 fi
 

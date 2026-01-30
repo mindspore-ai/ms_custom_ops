@@ -316,7 +316,6 @@ class CustomBuildExt(build_ext):
         else:
             self.compile_cores = min(8, max(1, available_cores // 2))
 
-        self.compile_cores = 2
         logger.info(
             "Available CPU cores: %s, using %s cores for compilation",
             available_cores,
