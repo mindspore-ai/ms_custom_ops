@@ -1,2 +1,7 @@
 "ms_custom_ops/ops/ascendc/aclnn_src/grid_sample_ms/op_kernel/grid_sample_ms.cpp" ""
 "ms_custom_ops/ops/ascendc/aclnn_src/unpad_fa_npd/op_host/unpad_fa_npd_tiling.cpp" "unreadVariable"
+"ms_custom_ops/ops/ascendc/aclnn_src/sparse_attention_score/op_host/sparse_attention_score_tiling.cpp" "unknownMacro"
+"ms_custom_ops/ops/ascendc/aclnn_src/sparse_attention_score/op_host/sparse_attention_score_tiling_general.cpp" "virtualCallInConstructor"
+"ms_custom_ops/ops/ascendc/aclnn_src/sparse_attention_score/op_host/sparse_attention_score_tiling_general.cpp" "unreadVariable"
+"ms_custom_ops/ops/ascendc/aclnn_src/sparse_attention_score/op_host/sparse_attention_score_proto.cpp" "unreadVariable"
+"ms_custom_ops/ops/ascendc/aclnn_src/sparse_attention_score/op_host/sparse_attention_score_tiling_general.cpp" "invalidPrintfArgType_sint"

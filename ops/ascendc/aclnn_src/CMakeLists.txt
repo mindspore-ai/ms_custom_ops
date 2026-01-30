@@ -3,7 +3,9 @@
 # This file is a part of the CANN Open Software.
 # Licensed under CANN Open Software License Agreement Version 2.0 (the "License").
 # Please refer to the License for details. You may not use this file except in compliance with the License.
-# THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
+# THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+# EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+# MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
 # See LICENSE in the root of the software repository for the full text of the License.
 # ======================================================================================================================
 
@@ -21,14 +23,14 @@ include(cmake/config.cmake)
 include(cmake/func.cmake)
 include(cmake/intf.cmake)
 
-if (BUILD_OPEN_PROJECT)
-    set(CMAKE_MODULE_PATH 
-        ${CMAKE_MODULE_PATH} 
+if(BUILD_OPEN_PROJECT)
+    set(CMAKE_MODULE_PATH
+        ${CMAKE_MODULE_PATH}
         ${CMAKE_CURRENT_LIST_DIR}/cmake/modules
     )
 
-    set(CMAKE_PREFIX_PATH 
-        ${CMAKE_PREFIX_PATH} 
+    set(CMAKE_PREFIX_PATH
+        ${CMAKE_PREFIX_PATH}
         ${ASCEND_CANN_PACKAGE_PATH}
     )
 
@@ -44,7 +46,7 @@ if (BUILD_OPEN_PROJECT)
     if(NOT ${alog_FOUND})
         add_definitions(-DALOG_NOT_FOUND)
     endif()
-    
+
     add_library(op_host_aclnn SHARED EXCLUDE_FROM_ALL)
     target_link_libraries(op_host_aclnn PRIVATE
             ${_op_host_aclnn_link}
@@ -127,7 +129,7 @@ if (BUILD_OPEN_PROJECT)
     )
     target_link_libraries(opsproto PRIVATE
             $<BUILD_INTERFACE:intf_pub>
-            # $<BUILD_INTERFACE:ops_utils_proto_headers> # ms_custom_ops modification: remove utils interface
+            $<BUILD_INTERFACE:ops_utils_proto_headers>
             $<$<BOOL:${alog_FOUND}>:$<BUILD_INTERFACE:alog_headers>>
             -Wl,--whole-archive
             rt2_registry
@@ -162,7 +164,7 @@ if (BUILD_OPEN_PROJECT)
     )
     target_link_libraries(optiling PRIVATE
             $<BUILD_INTERFACE:intf_pub>
-            # $<BUILD_INTERFACE:ops_utils_tiling_headers> # ms_custom_ops modification: remove utils interface
+            $<BUILD_INTERFACE:ops_utils_tiling_headers>
             $<$<BOOL:${alog_FOUND}>:$<BUILD_INTERFACE:alog_headers>>
             -Wl,--whole-archive
             rt2_registry
@@ -191,7 +193,8 @@ if (BUILD_OPEN_PROJECT)
             COMMAND ln -sf $<TARGET_FILE:optiling> ${TILING_CUSTOM_FILE}
     )
     install(TARGETS optiling
-            LIBRARY DESTINATION packages/vendors/${VENDOR_NAME}/op_impl/ai_core/tbe/op_tiling/lib/linux/${CMAKE_SYSTEM_PROCESSOR}
+        LIBRARY DESTINATION
+        packages/vendors/${VENDOR_NAME}/op_impl/ai_core/tbe/op_tiling/lib/linux/${CMAKE_SYSTEM_PROCESSOR}
     )
 
     # optiling compat
@@ -242,43 +245,45 @@ if (BUILD_OPEN_PROJECT)
         )
     endforeach()
     # End ms_custom_ops modification
-endif ()
+endif()
+
+add_subdirectory(utils)
 
 set(OP_LIST)
 set(OP_DIR_LIST)
 op_add_subdirectory(OP_LIST OP_DIR_LIST)
 
-foreach (OP_DIR ${OP_DIR_LIST})
-    if (EXISTS "${OP_DIR}/ophost")
+foreach(OP_DIR ${OP_DIR_LIST})
+    if(EXISTS "${OP_DIR}/ophost")
         add_subdirectory(${OP_DIR}/ophost)
     else()
         add_subdirectory(${OP_DIR})
     endif()
-endforeach ()
+endforeach()
 
 set(OP_DEPEND_DIR_LIST)
 op_add_depend_directory(
         OP_LIST ${OP_LIST}
         OP_DIR_LIST OP_DEPEND_DIR_LIST
 )
-foreach (OP_DEPEND_DIR ${OP_DEPEND_DIR_LIST})
-    if (EXISTS "${OP_DEPEND_DIR}/ophost")
+foreach(OP_DEPEND_DIR ${OP_DEPEND_DIR_LIST})
+    if(EXISTS "${OP_DEPEND_DIR}/ophost")
         add_subdirectory(${OP_DEPEND_DIR}/ophost)
     else()
         add_subdirectory(${OP_DEPEND_DIR})
     endif()
-endforeach ()
+endforeach()
 
 # ------------------------------------------------ aclnn ------------------------------------------------
 get_target_property(base_aclnn_srcs op_host_aclnn SOURCES)
 get_target_property(base_aclnn_inner_srcs op_host_aclnnInner SOURCES)
 get_target_property(base_aclnn_exclude_srcs op_host_aclnnExc SOURCES)
 
-if (BUILD_OPEN_PROJECT)
+if(BUILD_OPEN_PROJECT)
     set(base_aclnn_binary_dir ${ASCEND_AUTOGEN_DIR})
 else()
     get_target_property(base_aclnn_binary_dir op_host_aclnn BINARY_DIR)
-endif ()
+endif()
 
 set(generate_aclnn_srcs)
 set(generate_aclnn_inner_srcs)
@@ -288,10 +293,10 @@ set(generate_exclude_proto_srcs)
 set(generate_proto_srcs)
 set(generate_proto_headers)
 
-if (base_aclnn_srcs)
-    foreach (_src ${base_aclnn_srcs})
+if(base_aclnn_srcs)
+    foreach(_src ${base_aclnn_srcs})
         string(REGEX MATCH "^${CMAKE_CURRENT_SOURCE_DIR}" is_match "${_src}")
-        if (is_match)
+        if(is_match)
             get_filename_component(name_without_ext ${_src} NAME_WE)
 
             string(REGEX REPLACE "_def$" "" _op_name ${name_without_ext})
@@ -299,9 +304,9 @@ if (base_aclnn_srcs)
             list(APPEND generate_aclnn_headers ${base_aclnn_binary_dir}/aclnn_${_op_name}.h)
             list(APPEND generate_proto_srcs    ${generate_proto_dir}/${_op_name}_proto.cpp)
             list(APPEND generate_proto_headers ${generate_proto_dir}/${_op_name}_proto.h)
-        endif ()
-    endforeach ()
-else ()
+        endif()
+    endforeach()
+else()
     add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/op_host_aclnn_stub.cpp
             COMMAND touch ${CMAKE_CURRENT_BINARY_DIR}/op_host_aclnn_stub.cpp
     )
@@ -309,20 +314,20 @@ else ()
     target_sources(op_host_aclnn PRIVATE
             ${CMAKE_CURRENT_BINARY_DIR}/op_host_aclnn_stub.cpp
     )
-endif ()
+endif()
 
-if (base_aclnn_inner_srcs)
-    foreach (_src ${base_aclnn_inner_srcs})
+if(base_aclnn_inner_srcs)
+    foreach(_src ${base_aclnn_inner_srcs})
         string(REGEX MATCH "^${CMAKE_CURRENT_SOURCE_DIR}" is_match "${_src}")
-        if (is_match)
+        if(is_match)
             get_filename_component(name_without_ext ${_src} NAME_WE)
             string(REGEX REPLACE "_def$" "" _op_name ${name_without_ext})
             list(APPEND generate_aclnn_inner_srcs ${base_aclnn_binary_dir}/inner/aclnnInner_${_op_name}.cpp)
             list(APPEND generate_proto_srcs    ${generate_proto_dir}/inner/${_op_name}_proto.cpp)
             list(APPEND generate_proto_headers ${generate_proto_dir}/inner/${_op_name}_proto.h)
-        endif ()
-    endforeach ()
-else ()
+        endif()
+    endforeach()
+else()
     add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/op_host_aclnn_inner_stub.cpp
             COMMAND touch ${CMAKE_CURRENT_BINARY_DIR}/op_host_aclnn_inner_stub.cpp
     )
@@ -330,19 +335,19 @@ else ()
     target_sources(op_host_aclnnInner PRIVATE
             ${CMAKE_CURRENT_BINARY_DIR}/op_host_aclnn_inner_stub.cpp
     )
-endif ()
+endif()
 
-if (base_aclnn_exclude_srcs)
-    foreach (_src ${base_aclnn_exclude_srcs})
+if(base_aclnn_exclude_srcs)
+    foreach(_src ${base_aclnn_exclude_srcs})
         string(REGEX MATCH "^${CMAKE_CURRENT_SOURCE_DIR}" is_match "${_src}")
-        if (is_match)
+        if(is_match)
             get_filename_component(name_without_ext ${_src} NAME_WE)
             string(REGEX REPLACE "_def$" "" _op_name ${name_without_ext})
             list(APPEND generate_exclude_proto_srcs    ${generate_proto_dir}/exc/${_op_name}_proto.cpp)
             list(APPEND generate_proto_srcs            ${generate_proto_dir}/exc/${_op_name}_proto.cpp)
             list(APPEND generate_proto_headers         ${generate_proto_dir}/exc/${_op_name}_proto.h)
-        endif ()
-    endforeach ()
+        endif()
+    endforeach()
 else()
     add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/op_host_aclnn_exc_stub.cpp
             COMMAND touch ${CMAKE_CURRENT_BINARY_DIR}/op_host_aclnn_exc_stub.cpp
@@ -351,18 +356,18 @@ else()
     target_sources(op_host_aclnnExc PRIVATE
             ${CMAKE_CURRENT_BINARY_DIR}/op_host_aclnn_exc_stub.cpp
     )
-endif ()
+endif()
 
-if (BUILD_OPEN_PROJECT)
-    if (generate_aclnn_srcs OR generate_aclnn_inner_srcs)
+if(BUILD_OPEN_PROJECT)
+    if(generate_aclnn_srcs OR generate_aclnn_inner_srcs)
         set(ops_aclnn_src ${generate_aclnn_srcs} ${generate_aclnn_inner_srcs})
-    else ()
+    else()
         set(ops_aclnn_src ${CMAKE_CURRENT_BINARY_DIR}/ops_aclnn_src_stub.cpp)
 
         add_custom_command(OUTPUT ${ops_aclnn_src}
                 COMMAND touch ${ops_aclnn_src}
         )
-    endif ()
+    endif()
 
     set_source_files_properties(${ops_aclnn_src}
             PROPERTIES GENERATED TRUE
@@ -401,7 +406,7 @@ if (BUILD_OPEN_PROJECT)
             ops_aclnn
     )
 else()
-    if (generate_aclnn_srcs OR generate_aclnn_inner_srcs)
+    if(generate_aclnn_srcs OR generate_aclnn_inner_srcs)
         set_source_files_properties(${generate_aclnn_srcs} ${generate_aclnn_inner_srcs}
                 TARGET_DIRECTORY acl_op_builtin
                 PROPERTIES GENERATED TRUE
@@ -411,9 +416,9 @@ else()
                 ${generate_aclnn_srcs}
                 ${generate_aclnn_inner_srcs}
         )
-    endif ()
+    endif()
 
-    if (generate_proto_srcs)
+    if(generate_proto_srcs)
         set_source_files_properties(${generate_proto_srcs}
                 TARGET_DIRECTORY opsproto opsproto_rt2.0
                 PROPERTIES GENERATED TRUE
@@ -427,7 +432,7 @@ else()
                 ${generate_proto_srcs}
         )
         add_dependencies(opsproto_rt2.0 ops_proto_headers)
-    endif ()
+    endif()
 
     add_target_source(
             TARGET_NAME opmaster_rt2.0 opmaster_static_rt2.0
@@ -446,13 +451,13 @@ else()
             ACLNN_INNER_SRC ${generate_aclnn_inner_srcs}
             SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}
     )
-endif ()
+endif()
 
-if (generate_aclnn_headers)
+if(generate_aclnn_headers)
     install(FILES ${generate_aclnn_headers}
             DESTINATION ${ACLNN_INC_INSTALL_DIR} OPTIONAL
     )
-endif ()
+endif()
 
 add_library(ops_proto_headers INTERFACE)
 
@@ -463,7 +468,7 @@ target_include_directories(ops_proto_headers INTERFACE
         $<INSTALL_INTERFACE:include/ops_adv/proto>
 )
 
-if ((NOT BUILD_OPEN_PROJECT) AND ("${PRODUCT_SIDE}" STREQUAL "device"))
+if((NOT BUILD_OPEN_PROJECT) AND ("${PRODUCT_SIDE}" STREQUAL "device"))
     ExternalProject_Add(extern_opbuild_gen_default
             SOURCE_DIR ${TOP_DIR}/cmake/superbuild
             CONFIGURE_COMMAND ${CMAKE_COMMAND}
@@ -482,22 +487,22 @@ if ((NOT BUILD_OPEN_PROJECT) AND ("${PRODUCT_SIDE}" STREQUAL "device"))
     add_dependencies(ops_proto_headers extern_opbuild_gen_default)
 else()
     add_dependencies(ops_proto_headers opbuild_gen_default opbuild_gen_inner opbuild_gen_exc)
-endif ()
+endif()
 
-if (NOT BUILD_OPEN_PROJECT)
-    if (generate_proto_srcs)
+if(NOT BUILD_OPEN_PROJECT)
+    if(generate_proto_srcs)
         install_package(
                 PACKAGE ops_adv
                 TARGETS ops_proto_headers
                 FILES ${generate_proto_headers}
                 DESTINATION include/ops_adv/proto
         )
-    endif ()
-endif ()
+    endif()
+endif()
 
 # ------------------------------------------------ opbuild ------------------------------------------------
-if (BUILD_OPEN_PROJECT)
-    if (generate_aclnn_srcs)
+if(BUILD_OPEN_PROJECT)
+    if(generate_aclnn_srcs)
         add_custom_command(OUTPUT ${generate_aclnn_srcs} ${generate_aclnn_headers}
                 COMMAND mkdir -p ${base_aclnn_binary_dir}
                 COMMAND OPS_PROTO_SEPARATE=1
@@ -507,13 +512,13 @@ if (BUILD_OPEN_PROJECT)
                 $<TARGET_FILE:op_host_aclnn>
                 ${base_aclnn_binary_dir}
         )
-    endif ()
+    endif()
 
     add_custom_target(opbuild_gen_default
             DEPENDS ${generate_aclnn_srcs} ${generate_aclnn_headers} op_host_aclnn
     )
 
-    if (generate_aclnn_inner_srcs)
+    if(generate_aclnn_inner_srcs)
         add_custom_command(OUTPUT ${generate_aclnn_inner_srcs}
                 COMMAND mkdir -p ${base_aclnn_binary_dir}/inner
                 COMMAND OPS_PROTO_SEPARATE=1
@@ -523,13 +528,13 @@ if (BUILD_OPEN_PROJECT)
                 $<TARGET_FILE:op_host_aclnnInner>
                 ${base_aclnn_binary_dir}/inner
         )
-    endif ()
+    endif()
 
     add_custom_target(opbuild_gen_inner
             DEPENDS ${generate_aclnn_inner_srcs} op_host_aclnnInner
     )
 
-    if (generate_exclude_proto_srcs)
+    if(generate_exclude_proto_srcs)
         add_custom_command(OUTPUT ${generate_exclude_proto_srcs}
                 COMMAND mkdir -p ${base_aclnn_binary_dir}/exc
                 COMMAND OPS_PROTO_SEPARATE=1
@@ -539,12 +544,12 @@ if (BUILD_OPEN_PROJECT)
                 $<TARGET_FILE:op_host_aclnnExc>
                 ${base_aclnn_binary_dir}/exc
         )
-    endif ()
+    endif()
 
     add_custom_target(opbuild_gen_exc
             DEPENDS ${generate_exclude_proto_srcs} op_host_aclnnExc
     )
-endif ()
+endif()
 
 # ------------------------------------------------ generate adapt py ------------------------------------------------
 add_custom_target(generate_adapt_py
@@ -560,17 +565,17 @@ add_custom_target(generate_adapt_py
 
 add_dependencies(generate_adapt_py opbuild_gen_default opbuild_gen_inner opbuild_gen_exc)
 
-foreach (_op_name ${OP_LIST})
+foreach(_op_name ${OP_LIST})
     install(FILES ${ASCEND_IMPL_OUT_DIR}/dynamic/${_op_name}.py
             DESTINATION ${IMPL_DYNAMIC_INSTALL_DIR}
             OPTIONAL
     )
-endforeach ()
+endforeach()
 
-foreach (op_dir ${OP_DIR_LIST})
+foreach(op_dir ${OP_DIR_LIST})
     get_filename_component(_op_name "${op_dir}" NAME)
 
-    if (EXISTS "${op_dir}/op_kernel")
+    if(EXISTS "${op_dir}/op_kernel")
         file(GLOB KERNEL_FILES
             ${op_dir}/op_kernel/*.cpp
             ${op_dir}/op_kernel/*.h
@@ -597,16 +602,16 @@ foreach (op_dir ${OP_DIR_LIST})
             OPTIONAL
     )
 
-endforeach ()
+endforeach()
 
 # ------------------------------------------------ generate compile cmd ------------------------------------------------
-if (BUILD_OPEN_PROJECT)
+if(BUILD_OPEN_PROJECT)
     add_custom_target(prepare_build ALL)
     add_custom_target(generate_compile_cmd ALL)
     add_custom_target(generate_ops_info ALL)
     add_dependencies(prepare_build generate_adapt_py generate_compile_cmd)
 
-    foreach (compute_unit ${ASCEND_COMPUTE_UNIT})
+    foreach(compute_unit ${ASCEND_COMPUTE_UNIT})
         add_compile_cmd_target(
                 COMPUTE_UNIT ${compute_unit}
         )
@@ -614,34 +619,35 @@ if (BUILD_OPEN_PROJECT)
         add_ops_info_target(
                 COMPUTE_UNIT ${compute_unit}
         )
-    endforeach ()
+    endforeach()
 else()
     add_dependencies(tbe_ops_json_info generate_adapt_py)
-endif ()
+endif()
 
 # ------------------------------------------------ opp kernel ------------------------------------------------
-if (ENABLE_OPS_KERNEL)
+if(ENABLE_OPS_KERNEL)
     add_custom_target(ops_kernel ALL)
     add_custom_target(ops_config ALL)
     add_dependencies(ops_kernel ops_config)
 
-    foreach (compute_unit ${ASCEND_COMPUTE_UNIT})
+    foreach(compute_unit ${ASCEND_COMPUTE_UNIT})
         add_bin_compile_target(
                 COMPUTE_UNIT
                 ${compute_unit}
                 OP_INFO
                 ${OP_DIR_LIST}
         )
-    endforeach ()
-endif ()
+    endforeach()
+endif()
 
-if (BUILD_OPEN_PROJECT)
+if(BUILD_OPEN_PROJECT)
     add_custom_target(modify_vendor ALL
             DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/scripts/install.sh ${CMAKE_CURRENT_BINARY_DIR}/scripts/upgrade.sh
     )
 
     # modify VENDOR_NAME in install.sh and upgrade.sh
-    add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/scripts/install.sh ${CMAKE_CURRENT_BINARY_DIR}/scripts/upgrade.sh
+    add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/scripts/install.sh
+                ${CMAKE_CURRENT_BINARY_DIR}/scripts/upgrade.sh
             COMMAND mkdir -p ${CMAKE_CURRENT_BINARY_DIR}/scripts
             COMMAND cp -r ${ASCEND_PROJECT_DIR}/scripts/* ${CMAKE_CURRENT_BINARY_DIR}/scripts/
             COMMAND chmod +w ${CMAKE_CURRENT_BINARY_DIR}/scripts/*
@@ -678,6 +684,7 @@ if (BUILD_OPEN_PROJECT)
     set(CPACK_CMAKE_GENERATOR "Unix Makefiles")
     set(CPACK_EXTERNAL_ENABLE_STAGING TRUE)
     set(CPACK_EXTERNAL_PACKAGE_SCRIPT ${ASCEND_CMAKE_DIR}/makeself.cmake)
-    set(CPACK_EXTERNAL_BUILT_PACKAGES ${CPACK_PACKAGE_DIRECTORY}/_CPack_Packages/Linux/External/${CPACK_PACKAGE_FILE_NAME}/${CPACK_PACKAGE_FILE_NAME})
+    set(CPACK_EXTERNAL_BUILT_PACKAGES
+      ${CPACK_PACKAGE_DIRECTORY}/_CPack_Packages/Linux/External/${CPACK_PACKAGE_FILE_NAME}/${CPACK_PACKAGE_FILE_NAME})
     include(CPack)
-endif ()
+endif()
