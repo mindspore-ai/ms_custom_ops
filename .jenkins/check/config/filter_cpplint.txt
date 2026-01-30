@@ -1,0 +1,10 @@
+# ms_custom_ops
+"ms_custom_ops/ops/ascendc/apply_rotary_pos_emb_ms/op_kernel" "build/include_subdir"
+"ms_custom_ops/ops/ascendc/apply_rotary_pos_emb_ms/op_host" "build/include_subdir"
+"ms_custom_ops/ops/ascendc/unpad_fa_npd/op_kernel" "build/include_subdir"
+"ms_custom_ops/ops/ascendc/unpad_fa_npd/op_host" "build/include_subdir"
+"ms_custom_ops/ops/ascendc/reshape_and_cache_npd/op_kernel" "build/include_subdir"
+"ms_custom_ops/ops/ascendc/reshape_and_cache_npd/op_host" "build/include_subdir"
+"ms_custom_ops/ops/ascendc/kernel_common/op_kernel" "build/include_subdir"
+# ms_custom_ops
+"ms_custom_ops/ops/framework/ms_kernels_internal/pyboost/internal_pyboost_runner.h"  "build/include_subdir"
