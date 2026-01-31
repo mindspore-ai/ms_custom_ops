@@ -1,0 +1,13 @@
+#operator matmul_batch_invariant
+matmul_batch_invariant:
+  args:
+    x1:
+      dtype: tensor
+    x2:
+      dtype: tensor
+    cube_math_type:
+      dtype: int
+      default: 0
+  returns:
+    y:
+      dtype: tensor
