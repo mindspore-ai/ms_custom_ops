@@ -5,3 +5,4 @@
 "ms_custom_ops/ops/ascendc/aclnn_src/sparse_attention_score/op_host/sparse_attention_score_tiling_general.cpp" "unreadVariable"
 "ms_custom_ops/ops/ascendc/aclnn_src/sparse_attention_score/op_host/sparse_attention_score_proto.cpp" "unreadVariable"
 "ms_custom_ops/ops/ascendc/aclnn_src/sparse_attention_score/op_host/sparse_attention_score_tiling_general.cpp" "invalidPrintfArgType_sint"
+"ms_custom_ops/ops/ascendc/aclnn_src/fused_add_topk_div_moe_ms/op_kernel/fused_add_topk_div_moe_ms.cpp" ""

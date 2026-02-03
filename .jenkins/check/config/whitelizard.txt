@@ -8,3 +8,4 @@ ms_custom_ops/ops/ascendc/aclnn_src/sparse_attention_score/op_kernel/sparse_atte
 ms_custom_ops/ops/ascendc/aclnn_src/sparse_attention_score/op_host/sparse_attention_score_tiling.cpp:optiling::IsEmptyInput
 ms_custom_ops/ops/ascendc/aclnn_src/sparse_attention_score/op_host/sparse_attention_score.cpp:l0op::SparseAttentionScore
 ms_custom_ops/ops/ascendc/aclnn_src/sparse_attention_score/op_host/sparse_attention_score_def.cpp:ops::SparseAttentionScore::SparseAttentionScore
+ms_custom_ops/ops/ascendc/aclnn_src/fused_add_topk_div_moe_ms/op_kernel/fused_add_topk_div_moe_ms.cpp:KernelFusedAddTopkDivMoeMS::fused_add_topk_div_moe_0_kernel

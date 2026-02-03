@@ -1,0 +1,33 @@
+#operator fused_add_topk_div_moe
+fused_add_topk_div_moe:
+  args:
+    logits:
+      dtype: tensor
+    bias:
+      dtype: tensor
+    num_groups:
+      dtype: int
+      default: 1
+    group_topk: 
+      dtype: int
+      default: 1
+    topk_div_group_topk:
+      dtype: int
+      default: 8
+    topk:
+      dtype: int
+      default: 8
+    activate_type:
+      dtype: int
+      default: 0
+    is_norm:
+      dtype: bool
+      default: true
+    scale:
+      dtype: float
+      default: 1.0
+  returns:
+    weight:
+      dtype: tensor
+    indices:
+      dtype: tensor
