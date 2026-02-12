@@ -134,6 +134,7 @@ def run_reduce_sum_batch_invariant(
     )
 
 
+@pytest.mark.skip("CI need to install ops-batchinvariant-dev package")
 @pytest.mark.level0
 @pytest.mark.env_onecard
 @pytest.mark.platform_ascend910b

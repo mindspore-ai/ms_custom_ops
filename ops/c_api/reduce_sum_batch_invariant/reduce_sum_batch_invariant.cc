@@ -107,7 +107,6 @@ class OPS_API ReduceSumBatchInvariantCustomOpFuncImpl : public OpFuncImpl {
 
   std::vector<TypeId> InferType(const PrimitivePtr &primitive, const InferInfoPtrList &input_infos) const override {
     MS_EXCEPTION_IF_NULL(primitive);
-    auto op_name = primitive->name();
 
     // Get output_dtype parameter and use it as output type
     auto output_dtype = input_infos[static_cast<size_t>(ReduceSumBatchInvariantInputIndex::kOutputDtypeIndex)]

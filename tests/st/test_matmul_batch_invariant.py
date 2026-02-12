@@ -43,6 +43,7 @@ class MatmulBatchInvariantNet(ms.nn.Cell):
         return out
 
 
+@pytest.mark.skip("CI need to install ops-batchinvariant-dev package")
 @pytest.mark.level0
 @pytest.mark.env_onecard
 @pytest.mark.platform_ascend910b
@@ -203,6 +204,7 @@ def test_matmul_batch_invariant_6d(exec_mode):
                        output.astype(ms.float32).asnumpy(), rtol=1e-2, atol=1e-2)
 
 
+@pytest.mark.skip("CI need to install ops-batchinvariant-dev package")
 @pytest.mark.level0
 @pytest.mark.env_onecard
 @pytest.mark.platform_ascend910b
@@ -233,6 +235,7 @@ def test_matmul_batch_invariant_1d_vector_matrix(exec_mode):
                        output.astype(ms.float32).asnumpy(), rtol=1e-2, atol=1e-2)
 
 
+@pytest.mark.skip("CI need to install ops-batchinvariant-dev package")
 @pytest.mark.level0
 @pytest.mark.env_onecard
 @pytest.mark.platform_ascend910b
@@ -294,6 +297,7 @@ def test_matmul_batch_invariant_broadcast_batch(exec_mode):
                        output.astype(ms.float32).asnumpy(), rtol=1e-2, atol=1e-2)
 
 
+@pytest.mark.skip("CI need to install ops-batchinvariant-dev package")
 @pytest.mark.level0
 @pytest.mark.env_onecard
 @pytest.mark.platform_ascend910b
@@ -324,6 +328,7 @@ def test_matmul_batch_invariant_broadcast_different_ndim(exec_mode):
                        output.astype(ms.float32).asnumpy(), rtol=1e-2, atol=1e-2)
 
 
+@pytest.mark.skip("CI need to install ops-batchinvariant-dev package")
 @pytest.mark.level0
 @pytest.mark.env_onecard
 @pytest.mark.platform_ascend910b

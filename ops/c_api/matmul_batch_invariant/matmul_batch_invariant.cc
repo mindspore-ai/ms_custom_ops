@@ -52,8 +52,7 @@ constexpr int64_t kUnknownDim = -1;
  * @param op_name Operator name for error messages
  * @return ShapeVector The broadcasted batch shape
  */
-ShapeVector BroadcastBatchShape(const ShapeVector &batch1, const ShapeVector &batch2,
-                                const std::string &op_name) {
+ShapeVector BroadcastBatchShape(const ShapeVector &batch1, const ShapeVector &batch2, const std::string &op_name) {
   size_t max_len = std::max(batch1.size(), batch2.size());
   ShapeVector result(max_len);
 
@@ -77,8 +76,7 @@ ShapeVector BroadcastBatchShape(const ShapeVector &batch1, const ShapeVector &ba
     } else if (dim2 == 1) {
       result[max_len - 1 - i] = dim1;
     } else {
-      MS_LOG(EXCEPTION) << "For '" << op_name << "', batch dimensions cannot be broadcast: "
-                        << dim1 << " vs " << dim2;
+      MS_LOG(EXCEPTION) << "For '" << op_name << "', batch dimensions cannot be broadcast: " << dim1 << " vs " << dim2;
     }
   }
 
@@ -122,13 +120,13 @@ ShapeVector MatmulBatchInvariantInferShape(const ShapeVector &x1_shape, const Sh
   size_t dim_num_x2 = shape_x2.size();
 
   if (dim_num_x1 < kMatmulMinShapeSize || dim_num_x1 > kMatmulMaxShapeSize) {
-    MS_LOG(EXCEPTION) << "For '" << op_name << "', x1 shape dimension [" << dim_num_x1
-                      << "] must be between " << kMatmulMinShapeSize << " and " << kMatmulMaxShapeSize;
+    MS_LOG(EXCEPTION) << "For '" << op_name << "', x1 shape dimension [" << dim_num_x1 << "] must be between "
+                      << kMatmulMinShapeSize << " and " << kMatmulMaxShapeSize;
   }
 
   if (dim_num_x2 < kMatmulMinShapeSize || dim_num_x2 > kMatmulMaxShapeSize) {
-    MS_LOG(EXCEPTION) << "For '" << op_name << "', x2 shape dimension [" << dim_num_x2
-                      << "] must be between " << kMatmulMinShapeSize << " and " << kMatmulMaxShapeSize;
+    MS_LOG(EXCEPTION) << "For '" << op_name << "', x2 shape dimension [" << dim_num_x2 << "] must be between "
+                      << kMatmulMinShapeSize << " and " << kMatmulMaxShapeSize;
   }
 
   // Get M, K from x1 (last two dimensions: [..., M, K])
@@ -141,8 +139,8 @@ ShapeVector MatmulBatchInvariantInferShape(const ShapeVector &x1_shape, const Sh
 
   // Validate K dimension consistency
   if (k_x1 != kUnknownDim && k_x2 != kUnknownDim && k_x1 != k_x2) {
-    MS_LOG(EXCEPTION) << "For '" << op_name << "', the K-axis of x1(" << k_x1
-                      << ") and x2(" << k_x2 << ") tensors must be the same";
+    MS_LOG(EXCEPTION) << "For '" << op_name << "', the K-axis of x1(" << k_x1 << ") and x2(" << k_x2
+                      << ") tensors must be the same";
   }
 
   // Extract batch dimensions (all dimensions except last 2)
@@ -261,8 +259,8 @@ ms::Tensor matmul_batch_invariant_custom(const ms::Tensor &x1, const ms::Tensor 
 }  // namespace ms_custom_ops
 
 auto pyboost_matmul_batch_invariant(const ms::Tensor &x1, const ms::Tensor &x2, int64_t cube_math_type) {
-  return ms::pynative::PyboostRunner::Call<ms_custom_ops::kNumber1>(ms_custom_ops::matmul_batch_invariant_custom, x1, x2,
-                                                                    cube_math_type);
+  return ms::pynative::PyboostRunner::Call<ms_custom_ops::kNumber1>(ms_custom_ops::matmul_batch_invariant_custom, x1,
+                                                                    x2, cube_math_type);
 }
 
 MS_CUSTOM_OPS_EXTENSION_MODULE(m) {

@@ -20,16 +20,16 @@ ms_custom_ops.reduce_sum_batch_invariant(input, dims, keep_dims, output_dtype)
 ## 参数说明
 
 - **input** (Tensor): 输入张量，shape 支持 0-8 维，支持非连续的 Tensor，数据格式支持 ND。
-  - 数据类型支持：FLOAT16、FLOAT32、BFLOAT16
+    - 数据类型支持：FLOAT16、FLOAT32、BFLOAT16
 
 - **dims** (tuple[int]): 指定要进行求和的维度，数据类型为 INT64，取值范围为 [-input.dim(), input.dim()-1]。空列表表示对所有维度求和。
 
 - **keep_dims** (bool): 指定是否在输出张量中保留被求和的维度。
-  - True: 保留维度，被求和的维度大小变为 1
-  - False: 不保留维度，输出张量的维度数减少
+    - True: 保留维度，被求和的维度大小变为 1
+    - False: 不保留维度，输出张量的维度数减少
 
 - **output_dtype** (mindspore.dtype): 指定输出张量的数据类型，如 `ms.float32`。
-  - 数据类型支持：FLOAT16、FLOAT32、BFLOAT16
+    - 数据类型支持：FLOAT16、FLOAT32、BFLOAT16
 
 ## 返回值
 
