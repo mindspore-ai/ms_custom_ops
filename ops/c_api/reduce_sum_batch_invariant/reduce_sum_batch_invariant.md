@@ -4,6 +4,13 @@
 
 `reduce_sum_batch_invariant` 是一个具有 batch 不变性的求和算子。该算子在指定维度上对输入张量进行求和操作，同时保证对于相同的 batch[0] 输入数据，无论总 batch 大小如何，都能产生相同的输出结果。
 
+## 依赖安装说明
+
+`reduce_sum_batch_invariant` 依赖外部算子包 `ops-batchinvariant-dev`。若运行时未安装该包（或未将安装路径加入 `ASCEND_CUSTOM_OPP_PATH`），会触发缺失依赖告警。
+
+- 仓库地址：https://gitcode.com/cann/ops-batchinvariant-dev
+- 安装文档：https://gitcode.com/cann/ops-batchinvariant-dev/tree/master/docs
+
 ## 产品支持情况
 
 | 产品 | 是否支持 |
