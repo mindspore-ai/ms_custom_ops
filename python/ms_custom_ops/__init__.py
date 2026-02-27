@@ -26,6 +26,7 @@ Example usage:
 
 import os
 import glob
+import logging
 import mindspore
 
 
@@ -73,7 +74,6 @@ register_custom_pass("ConvertTupleInputToDynamicInput")
 
 # pylint: disable=wrong-import-position
 from .ms_custom_ops import *
-
 # Import generated ops interfaces
 try:
     from .gen_ops_def import *
@@ -84,6 +84,66 @@ try:
     from .gen_ops_prim import *
 except ImportError:
     pass  # Generated files may not exist during development
+
+def _warn_missing_batchinvariant_package():
+    """Warn if ops-batchinvariant package directory is not found in known locations."""
+    found = False
+
+    # 1) Check ASCEND_CUSTOM_OPP_PATH entries
+    opp_path = os.getenv("ASCEND_CUSTOM_OPP_PATH", "")
+    for raw_path in opp_path.split(":"):
+        path = raw_path.strip()
+        if not path:
+            continue
+        real_path = os.path.realpath(path)
+        if os.path.isdir(real_path) and os.path.basename(real_path) == "custom_batchinvariant":
+            found = True
+            break
+
+    # 2) Check CANN install directories under opp/vendors
+    if not found:
+        cann_roots = []
+        for env_key in (
+            "ASCEND_HOME_PATH",
+            "ASCEND_CANN_PACKAGE_PATH",
+            "ASCEND_TOOLKIT_HOME",
+            "LOCAL_ASCEND",
+        ):
+            env_val = os.getenv(env_key, "")
+            env_val = env_val.strip()
+            if env_val:
+                cann_roots.append(env_val)
+        for root in cann_roots:
+            root_path = os.path.realpath(root)
+            candidate = os.path.join(root_path, "opp", "vendors", "custom_batchinvariant")
+            if os.path.isdir(candidate):
+                found = True
+                break
+
+    # 3) Check ASCEND_OPP_PATH directly if set
+    if not found:
+        opp_root = os.getenv("ASCEND_OPP_PATH", "").strip()
+        if opp_root:
+            opp_root = os.path.realpath(opp_root)
+            candidate = os.path.join(opp_root, "vendors", "custom_batchinvariant")
+            if os.path.isdir(candidate):
+                found = True
+
+    if not found:
+        message = (
+            "[ms_custom_ops] Optional package 'ops-batchinvariant-dev' was not detected from "
+            "ASCEND_CUSTOM_OPP_PATH or CANN opp/vendors. Operators [matmul_batch_invariant, "
+            "reduce_sum_batch_invariant] are unavailable. Please install from "
+            "https://gitcode.com/cann/ops-batchinvariant-dev and follow the docs at "
+            "https://gitcode.com/cann/ops-batchinvariant-dev/tree/master/docs. "
+            "If the package is already installed, ensure ASCEND_CUSTOM_OPP_PATH points to its "
+            "custom_batchinvariant package directory or the CANN install path is set correctly.",
+        )
+        print(message)
+        logging.getLogger(__name__).warning(message)
+
+
+_warn_missing_batchinvariant_package()
 
 # Expose generated interfaces
 __all__ = ['register_custom_pass']

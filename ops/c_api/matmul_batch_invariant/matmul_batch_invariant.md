@@ -4,6 +4,13 @@
 
 matmul_batch_invariant 算子用于执行批不变矩阵乘法操作。该算子支持1D到6D的Tensor输入，遵循标准的矩阵乘法语义，支持batch维度广播。"BatchInvariant"特性确保对于batch[0]的计算结果不受总batch大小的影响，这对于需要确定性计算的场景非常有用。
 
+## 依赖安装说明
+
+`matmul_batch_invariant` 依赖外部算子包 `ops-batchinvariant-dev`。若运行时未安装该包（或未将安装路径加入 `ASCEND_CUSTOM_OPP_PATH`），会触发缺失依赖告警。
+
+- 仓库地址：https://gitcode.com/cann/ops-batchinvariant-dev
+- 安装文档：https://gitcode.com/cann/ops-batchinvariant-dev/tree/master/docs
+
 ## 输入参数
 
 | Name           | DType              | Shape     | Optional | Inplace | Format | Description                                          |
