@@ -10,7 +10,7 @@ usage()
   echo "    -d Debug mode"
   echo "    -v Soc version. (Default: Ascend910B,Ascend310P)"
   echo "    -p The absolute path to the directory of the operator that needs to be compiled, use ',' to split. (Default: all operators)"
-  echo "    -j[n] Set the threads when building (Default: half available cpus)"
+  echo "    -j[n] Set the threads when building (Default: quarter available cpus)"
   echo "    -c Force clean build (disable incremental build). By default, incremental build is enabled."
   echo "    -h Help"
   echo ""
