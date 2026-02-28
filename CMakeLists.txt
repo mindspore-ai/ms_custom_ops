@@ -91,11 +91,37 @@ set(ENABLE_DEBUG False)
 if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
     set(ENABLE_DEBUG True)
 endif()
+set(CUSTOM_OP_COMPILE_JOBS "" CACHE STRING "Parallel jobs for MindSpore CustomOpBuilder ninja")
 set(PYTHON_SCRIPT_PATH "${CMAKE_BINARY_DIR}/build_custom_with_ms.py")
 file(WRITE ${PYTHON_SCRIPT_PATH} "
+import os
+import subprocess
 import mindspore as ms
+from mindspore.ops.operations.custom_ops import ExtensionBuilder
 src_files = '${SRC_FILES}'.split(';')
 rpath_flag = \"-Wl,-rpath,'$$ORIGIN'/prebuild/ms_kernels_internal/internal_kernel/lib\"
+compile_jobs = '${CUSTOM_OP_COMPILE_JOBS}'.strip()
+
+def _run_ninja_build_with_jobs(self, module_name):
+    cmd = ['ninja', '-v']
+    if compile_jobs:
+        cmd.extend(['-j', compile_jobs])
+    env = os.environ.copy()
+    log_file = os.path.join(self.build_dir, '.build_log.txt')
+    try:
+        with open(log_file, 'w', encoding='utf-8') as f:
+            subprocess.run(cmd, stdout=f, stderr=f, cwd=self.build_dir, check=True, env=env)
+    except subprocess.CalledProcessError as e:
+        with open(log_file, 'r', encoding='utf-8') as rf:
+            full_output = rf.read()
+        msg = f\"Error building extension '{module_name}': {full_output}\"
+        so_file = os.path.join(self.build_dir, f\"{module_name}.so\")
+        if os.path.exists(so_file):
+            os.remove(so_file)
+        raise RuntimeError(msg) from e
+
+ExtensionBuilder._run_ninja_build = _run_ninja_build_with_jobs
+
 ms.ops.CustomOpBuilder(
     name='${MS_EXTENSION_NAME}',
     sources=src_files,

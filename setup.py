@@ -314,7 +314,8 @@ class CustomBuildExt(build_ext):
         if os.getenv("CMAKE_THREAD_NUM", None):
             self.compile_cores = int(os.getenv("CMAKE_THREAD_NUM"))
         else:
-            self.compile_cores = min(8, max(1, available_cores // 2))
+            # Use a conservative default to reduce cc1plus OOM risk on heavy TU builds.
+            self.compile_cores = max(1, available_cores // 4)
 
         logger.info(
             "Available CPU cores: %s, using %s cores for compilation",
@@ -547,6 +548,7 @@ class CustomBuildExt(build_ext):
             f"  -DASCENDC_INSTALL_PATH={self.package_path}"
             f"  -DMS_EXTENSION_NAME={self.ext_name}"
             f"  -DASCEND_CANN_PACKAGE_PATH={self.ascend_home_path}"
+            f"  -DCUSTOM_OP_COMPILE_JOBS={self.compile_cores}"
             f"  -DFORCE_CLEAN={force_clean_option} && "
             f"cmake --build {self.build_ops_dir} -j{self.compile_cores}"
         )
