@@ -1,6 +1,5 @@
 # ms_custom_ops算子列表
 
-1. [README](../ops/ascendc/aclnn_src/sparse_attention_score/README.md)
 1. [README](../ops/ascendc/aclnn_src/utils/README.md)
 1. [apply_rotary_pos_emb](../ops/c_api/apply_rotary_pos_emb/apply_rotary_pos_emb.md)
 1. [apply_rotary_pos_emb_atb](../ops/c_api/apply_rotary_pos_emb_atb/apply_rotary_pos_emb_atb.md)
@@ -33,7 +32,6 @@
 1. [reshape_and_cache_npd](../ops/ascendc/ms_glue/reshape_and_cache_npd/reshape_and_cache_npd.md)
 1. [ring_mla](../ops/c_api/ring_mla/ring_mla.md)
 1. [scatter_nd_update](../ops/c_api/scatter_nd_update/scatter_nd_update.md)
-1. [sparse_attention_score](../ops/ascendc/ms_glue/sparse_attention_score/sparse_attention_score.md)
 1. [sparse_flash_attention](../ops/c_api/sparse_flash_attention/sparse_flash_attention_doc.md)
 1. [trans_data](../ops/c_api/trans_data/trans_data.md)
 1. [type_cast](../ops/c_api/type_cast/type_cast.md)
