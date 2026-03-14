@@ -237,9 +237,6 @@ def _assert_pa_batch_invariant_scan(generator: PagedAttentionDataGenerator, test
         sample_inputs,
     ).asnumpy().astype(np.float32)
 
-    compare_dtype = test_config.get("expected_dtype", test_config["q_dtype"])
-    atol = 2e-2 if compare_dtype == ms.bfloat16 else 5e-3
-    rtol = atol
     inconsistent_batches = []
     for batch_size in batch_sizes:
         batch_inputs = _repeat_pa_sample_inputs(
@@ -260,7 +257,7 @@ def _assert_pa_batch_invariant_scan(generator: PagedAttentionDataGenerator, test
             output_fp32 = output.astype(np.float32)
             diff = np.max(np.abs(output_fp32 - baseline_output))
             max_diff = max(max_diff, float(diff))
-            if not np.allclose(output_fp32, baseline_output, rtol=rtol, atol=atol):
+            if not np.array_equal(output_fp32, baseline_output):
                 batch_failed = True
                 break
         if batch_failed:
