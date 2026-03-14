@@ -251,8 +251,8 @@ def _assert_pa_batch_invariant(generator: PagedAttentionDataGenerator, test_conf
         split_outputs = _split_pa_output_by_sample(batch_output, batch_inputs["q_seq_lens"])
         for local_idx, sample_idx in enumerate(grouping):
             np.testing.assert_allclose(
-                split_outputs[local_idx],
-                baseline_outputs[sample_idx],
+                split_outputs[local_idx].astype(np.float32),
+                baseline_outputs[sample_idx].astype(np.float32),
                 rtol=rtol,
                 atol=atol,
                 err_msg=f"Batch invariance failed for sample {sample_idx} in grouping {grouping}",
