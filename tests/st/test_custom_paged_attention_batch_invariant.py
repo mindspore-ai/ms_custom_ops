@@ -219,54 +219,58 @@ def _split_pa_output_by_sample(output: np.ndarray, q_seq_lens: np.ndarray) -> li
 
 
 def _assert_pa_batch_invariant_scan(generator: PagedAttentionDataGenerator, test_config: dict,
-                                    sample_spec: dict, batch_sizes: range, run_mode: int):
-    """Scan batch sizes and report which ones break batch invariance."""
+                                    q_seq_len: int, kv_seq_lens: list,
+                                    batch_sizes: list, run_mode: int):
+    """Scan context lengths and batch sizes, and report which combinations break invariance."""
     assert test_config.get("mla_v_dim", 0) > 0, "Batch invariance test must run the MLA path."
     assert test_config.get("kv_heads") == 1, "MLA path requires kv_heads == 1."
     assert test_config.get("input_layout", INPUT_LAYOUT_BSND) == INPUT_LAYOUT_BSND
 
-    sample_inputs = _build_pa_sample_inputs(
-        generator,
-        test_config,
-        sample_spec["q_seq_len"],
-        sample_spec["kv_seq_len"],
-    )
-    baseline_output = _execute_paged_attention_with_inputs(
-        test_config,
-        run_mode,
-        sample_inputs,
-    ).asnumpy().astype(np.float32)
-
-    inconsistent_batches = []
-    for batch_size in batch_sizes:
-        batch_inputs = _repeat_pa_sample_inputs(
+    inconsistent_cases = []
+    for kv_seq_len in kv_seq_lens:
+        sample_inputs = _build_pa_sample_inputs(
             generator,
             test_config,
-            sample_inputs,
-            batch_size,
+            q_seq_len,
+            kv_seq_len,
         )
-        batch_output = _execute_paged_attention_with_inputs(
+        baseline_output = _execute_paged_attention_with_inputs(
             test_config,
             run_mode,
-            batch_inputs,
-        ).asnumpy()
-        split_outputs = _split_pa_output_by_sample(batch_output, batch_inputs["q_seq_lens"])
-        batch_failed = False
-        max_diff = 0.0
-        for output in split_outputs:
-            output_fp32 = output.astype(np.float32)
-            diff = np.max(np.abs(output_fp32 - baseline_output))
-            max_diff = max(max_diff, float(diff))
-            if not np.array_equal(output_fp32, baseline_output):
-                batch_failed = True
-                break
-        if batch_failed:
-            inconsistent_batches.append((int(batch_size), max_diff))
+            sample_inputs,
+        ).asnumpy().astype(np.float32)
 
-    assert not inconsistent_batches, (
-        "Batch invariance mismatches found for batch sizes: "
-        + ", ".join(f"{batch_size}(max_diff={max_diff:.6e})"
-                    for batch_size, max_diff in inconsistent_batches)
+        for batch_size in batch_sizes:
+            batch_inputs = _repeat_pa_sample_inputs(
+                generator,
+                test_config,
+                sample_inputs,
+                batch_size,
+            )
+            batch_output = _execute_paged_attention_with_inputs(
+                test_config,
+                run_mode,
+                batch_inputs,
+            ).asnumpy()
+            split_outputs = _split_pa_output_by_sample(batch_output, batch_inputs["q_seq_lens"])
+            batch_failed = False
+            max_diff = 0.0
+            for output in split_outputs:
+                output_fp32 = output.astype(np.float32)
+                diff = np.max(np.abs(output_fp32 - baseline_output))
+                max_diff = max(max_diff, float(diff))
+                if not np.array_equal(output_fp32, baseline_output):
+                    batch_failed = True
+                    break
+            if batch_failed:
+                inconsistent_cases.append((int(kv_seq_len), int(batch_size), max_diff))
+
+    assert not inconsistent_cases, (
+        "Batch invariance mismatches found for (context_len, batch_size): "
+        + ", ".join(
+            f"({kv_seq_len}, {batch_size})(max_diff={max_diff:.6e})"
+            for kv_seq_len, batch_size, max_diff in inconsistent_cases
+        )
     )
 
 
@@ -274,8 +278,9 @@ def _assert_pa_batch_invariant_scan(generator: PagedAttentionDataGenerator, test
 def test_pa_mla_batch_invariant():
     """
     Feature: PagedAttention + MLA - batch invariance
-    Description: Run one MLA sample as baseline, then repeat it into batch sizes
-    200..256 and report which batch sizes break invariance.
+    Description: Run one MLA sample as baseline, then repeat it into sparse large
+    batch sizes under several context length thresholds and report which
+    combinations break invariance.
     Expectation: Graph mode executes on the MLA non-MTP path; all repeated
     batches should match the single-sample baseline.
     """
@@ -291,12 +296,15 @@ def test_pa_mla_batch_invariant():
         "qk_scale": 1.0 / math.sqrt(576),
         "mla_v_dim": 512,
     }
-    sample_spec = {"q_seq_len": 1, "kv_seq_len": 8192}
+    q_seq_len = 1
+    kv_seq_lens = [255, 256, 257, 511, 512, 513, 2048, 4096, 8192]
+    batch_sizes = [200, 208, 216, 224, 232, 240, 248, 256]
 
     _assert_pa_batch_invariant_scan(
         generator,
         test_config,
-        sample_spec,
-        range(200, 257),
+        q_seq_len,
+        kv_seq_lens,
+        batch_sizes,
         context.GRAPH_MODE,
     )
