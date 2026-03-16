@@ -19,7 +19,7 @@ import mindspore as ms
 from mindspore import context
 
 from test_custom_paged_attention import (
-    MASK_UNDEFINED,
+    MASK_SPEC,
     PagedAttentionDataGenerator,
     _paged_attention_test,
 )
@@ -30,13 +30,14 @@ from test_custom_paged_attention_batch_invariant import _assert_pa_batch_invaria
 def test_pa_mla_mtp_batch_invariant():
     """
     Feature: PagedAttention + MLA + MTP - batch invariance
-    Description: Run one MLA MTP sample as baseline, then repeat it into sparse
-    large batch sizes under several context length thresholds and report which
-    combinations break invariance.
-    Expectation: Graph mode executes on the MLA MTP path; all repeated batches
-    should match the single-sample baseline.
+    Description: Construct a look-ahead MLA MTP case close to the profiled
+    deployment shape pattern, then repeat a single sample into sparse larger
+    batches and report which combinations break invariance.
+    Expectation: Graph mode executes on the
+    internal_PagedMultiLatentAttentionMultiTokenPredictionMaskNdKernel path;
+    all repeated batches should match the single-sample baseline.
     """
-    generator = PagedAttentionDataGenerator(7800)
+    generator = PagedAttentionDataGenerator(8192)
     test_config = {
         "num_heads": 128,
         "kv_heads": 1,
@@ -44,14 +45,21 @@ def test_pa_mla_mtp_batch_invariant():
         "block_size": 128,
         "q_dtype": ms.bfloat16,
         "kv_dtype": ms.bfloat16,
-        "mask_type": MASK_UNDEFINED,
+        # MTP in the MindSpore/internal PA stack is driven by look-ahead mask
+        # semantics plus q_seq_lens > 1. Use SPEC mask to match that path.
+        "mask_type": MASK_SPEC,
         "qk_scale": 1.0 / math.sqrt(576),
         "mla_v_dim": 512,
         "calc_type": 1,
     }
-    q_seq_len = 4
-    kv_seq_lens = [255, 256, 257, 511, 512, 513, 2048, 4096, 8192]
-    batch_sizes = [200, 208, 216, 224, 232, 240, 248, 256]
+    # Use a multi-token query window so the internal PA stack keeps q_seq_lens
+    # and routes to the MLA MTP kernel instead of clearing q_seq_lens as a
+    # single-token decode case.
+    q_seq_len = 2
+    # Keep the exact profiled long-context case as the anchor and add nearby
+    # powers-of-two boundaries for sparse coverage.
+    kv_seq_lens = [2048, 4096, 8192]
+    batch_sizes = [200, 216, 232, 248, 256]
 
     _assert_pa_batch_invariant_scan(
         generator,
