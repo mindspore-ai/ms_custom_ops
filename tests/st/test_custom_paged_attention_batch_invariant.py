@@ -208,14 +208,35 @@ def _split_pa_output_by_sample(output: np.ndarray, q_seq_lens: np.ndarray) -> li
     return outputs
 
 
+def _build_random_batch_sample_indices(generator: PagedAttentionDataGenerator, sample_kind_count: int,
+                                       batch_size: int) -> list:
+    """Build a random batch composition while guaranteeing every sample kind appears."""
+    assert batch_size >= sample_kind_count, "Batch size must cover all sample kinds."
+
+    batch_sample_indices = np.concatenate(
+        [
+            np.arange(sample_kind_count, dtype=np.int32),
+            generator.rng.integers(
+                0,
+                sample_kind_count,
+                size=batch_size - sample_kind_count,
+                dtype=np.int32,
+            ),
+        ]
+    )
+    shuffled_order = generator.rng.permutation(batch_size)
+    return batch_sample_indices[shuffled_order].tolist()
+
+
 def _assert_pa_batch_invariant_random_mix(generator: PagedAttentionDataGenerator, test_config: dict,
                                           q_seq_len: int, kv_seq_len_candidates: list,
-                                          random_batch_cases: int, run_mode: int):
-    """Mix four random request lengths into each batch and compare with single-sample baselines."""
+                                          batch_size: int, random_batch_cases: int, run_mode: int):
+    """Run batch-256 inference composed from four lengths and compare each sample to one of four baselines."""
     assert test_config.get("mla_v_dim", 0) > 0, "Batch invariance test must run the MLA path."
     assert test_config.get("kv_heads") == 1, "MLA path requires kv_heads == 1."
     assert test_config.get("input_layout", INPUT_LAYOUT_BSND) == INPUT_LAYOUT_BSND
     assert len(kv_seq_len_candidates) >= 4, "Need at least four candidate lengths to build mixed batches."
+    assert batch_size >= 4, "Batch size must be at least 4."
 
     inconsistent_cases = []
     kv_seq_len_candidates = np.asarray(kv_seq_len_candidates, dtype=np.int32)
@@ -245,10 +266,15 @@ def _assert_pa_batch_invariant_random_mix(generator: PagedAttentionDataGenerator
                 ).asnumpy().astype(np.float32)
             )
 
+        batch_sample_indices = _build_random_batch_sample_indices(
+            generator,
+            len(sample_inputs_list),
+            int(batch_size),
+        )
         batch_inputs = _assemble_pa_batch_inputs(
             generator,
             test_config,
-            sample_inputs_list,
+            [sample_inputs_list[sample_idx] for sample_idx in batch_sample_indices],
         )
         batch_output = _execute_paged_attention_with_inputs(
             test_config,
@@ -257,9 +283,9 @@ def _assert_pa_batch_invariant_random_mix(generator: PagedAttentionDataGenerator
         ).asnumpy()
         split_outputs = _split_pa_output_by_sample(batch_output, batch_inputs["q_seq_lens"])
 
-        for sample_idx, (kv_seq_len, output, baseline_output) in enumerate(
-            zip(selected_kv_seq_lens, split_outputs, baseline_outputs)
-        ):
+        for batch_idx, (sample_idx, output) in enumerate(zip(batch_sample_indices, split_outputs)):
+            kv_seq_len = int(selected_kv_seq_lens[sample_idx])
+            baseline_output = baseline_outputs[sample_idx]
             output_fp32 = output.astype(np.float32)
             max_diff = float(np.max(np.abs(output_fp32 - baseline_output)))
             if not np.array_equal(output_fp32, baseline_output):
@@ -267,8 +293,9 @@ def _assert_pa_batch_invariant_random_mix(generator: PagedAttentionDataGenerator
                     (
                         case_idx,
                         tuple(int(length) for length in selected_kv_seq_lens),
+                        batch_idx,
                         sample_idx,
-                        int(kv_seq_len),
+                        kv_seq_len,
                         max_diff,
                     )
                 )
@@ -276,15 +303,16 @@ def _assert_pa_batch_invariant_random_mix(generator: PagedAttentionDataGenerator
     assert not inconsistent_cases, (
         "Batch invariance mismatches found for mixed-length cases: "
         + ", ".join(
-            "case#{case_idx} lens={batch_kv_seq_lens} sample={sample_idx} "
-            "kv_seq_len={kv_seq_len}(max_diff={max_diff:.6e})".format(
+            "case#{case_idx} lens={batch_kv_seq_lens} batch_idx={batch_idx} "
+            "baseline_idx={sample_idx} kv_seq_len={kv_seq_len}(max_diff={max_diff:.6e})".format(
                 case_idx=case_idx,
                 batch_kv_seq_lens=list(batch_kv_seq_lens),
+                batch_idx=batch_idx,
                 sample_idx=sample_idx,
                 kv_seq_len=kv_seq_len,
                 max_diff=max_diff,
             )
-            for case_idx, batch_kv_seq_lens, sample_idx, kv_seq_len, max_diff in inconsistent_cases
+            for case_idx, batch_kv_seq_lens, batch_idx, sample_idx, kv_seq_len, max_diff in inconsistent_cases
         )
     )
 
@@ -293,11 +321,11 @@ def _assert_pa_batch_invariant_random_mix(generator: PagedAttentionDataGenerator
 def test_pa_mla_batch_invariant():
     """
     Feature: PagedAttention + MLA - batch invariance
-    Description: Randomly choose four different request lengths, assemble them
-    into one mixed batch, and compare each batched result against its own
-    single-request baseline.
+    Description: Randomly choose four different request lengths, build a batch
+    of 256 requests from those four lengths, then compare every batched sample
+    against the matching one of four single-request baselines.
     Expectation: Graph mode executes on the MLA non-MTP path; every sample in
-    the mixed-length batch should match its single-sample baseline.
+    the 256 mixed-length batch should match its baseline.
     """
     generator = PagedAttentionDataGenerator(7700)
     test_config = {
@@ -313,6 +341,7 @@ def test_pa_mla_batch_invariant():
     }
     q_seq_len = 1
     kv_seq_lens = [255, 256, 257, 511, 512, 513, 2048, 4096, 8192]
+    batch_size = 256
     random_batch_cases = 16
 
     _assert_pa_batch_invariant_random_mix(
@@ -320,6 +349,7 @@ def test_pa_mla_batch_invariant():
         test_config,
         q_seq_len,
         kv_seq_lens,
+        batch_size,
         random_batch_cases,
         context.GRAPH_MODE,
     )
