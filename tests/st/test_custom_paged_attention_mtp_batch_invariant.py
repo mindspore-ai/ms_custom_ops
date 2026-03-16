@@ -20,6 +20,7 @@ import numpy as np
 import mindspore as ms
 from mindspore import context
 from mindspore import Profiler
+from mindspore.profiler import AicoreMetrics, ProfilerActivity, ProfilerLevel
 
 from test_custom_paged_attention import (
     MASK_SPEC,
@@ -57,6 +58,9 @@ def _execute_paged_attention_with_inputs_maybe_profile(
     profiler = Profiler(
         start_profile=False,
         output_path=_profiling_output_path(),
+        profiler_level=ProfilerLevel.Level2,
+        activities=[ProfilerActivity.CPU, ProfilerActivity.NPU],
+        aic_metrics=AicoreMetrics.AiCoreNone,
         data_simplification=False,
     )
     profiler.start()
