@@ -166,7 +166,7 @@ def write_commit_id():
 
 def get_version():
     """Get version from version.txt or use default."""
-    version_path = Path("ms_custom_ops") / "version.txt"
+    version_path = Path(ROOT_DIR) / "version.txt"
     if version_path.exists():
         return version_path.read_text().strip()
 
