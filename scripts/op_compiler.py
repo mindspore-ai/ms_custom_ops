@@ -18,6 +18,7 @@ import os
 import re
 import subprocess
 import logging
+import shutil
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -57,6 +58,62 @@ SOC_VERSION_MAP = {
     "ascend310b3": "ascend310b",
     "ascend310b4": "ascend310b",
 }
+
+
+def resolve_ascend_cmake_dir(cann_package_path):
+    """Resolve the complete CANN open-project cmake template directory."""
+    candidate_dirs = (
+        os.path.join(cann_package_path, "tools", "ascend_project", "cmake"),
+        os.path.join(cann_package_path, "tools", "op_project_templates", "ascendc", "customize", "cmake"),
+    )
+    required_files = (
+        os.path.join("util", "ascendc_impl_build.py"),
+        os.path.join("util", "gen_version_info.sh"),
+        "makeself.cmake",
+    )
+    for candidate in candidate_dirs:
+        if all(os.path.isfile(os.path.join(candidate, item)) for item in required_files):
+            return candidate
+
+    tools_dir = os.path.join(cann_package_path, "tools")
+    for dirpath, _, filenames in os.walk(tools_dir):
+        if "ascendc_impl_build.py" in filenames and os.path.basename(dirpath) == "util":
+            candidate = os.path.dirname(dirpath)
+            if all(os.path.isfile(os.path.join(candidate, item)) for item in required_files):
+                return candidate
+    raise ValueError(f"Cannot find aclnn cmake template under CANN path: {cann_package_path}")
+
+
+def prepare_gcc_toolchain_cmake_dir(cann_package_path, build_root, gcc_toolchain):
+    """Copy and patch the CANN cmake template with an explicit GCC toolchain."""
+    source_cmake_dir = resolve_ascend_cmake_dir(cann_package_path)
+    patched_cmake_dir = os.path.join(build_root, "patched_ascend_cmake")
+    if os.path.exists(patched_cmake_dir):
+        shutil.rmtree(patched_cmake_dir)
+    os.makedirs(build_root, exist_ok=True)
+    shutil.copytree(source_cmake_dir, patched_cmake_dir, symlinks=False)
+
+    impl_build_path = os.path.join(patched_cmake_dir, "util", "ascendc_impl_build.py")
+    if not os.path.isfile(impl_build_path):
+        raise ValueError(f"Patched AscendC cmake template is invalid, missing {impl_build_path}")
+
+    with open(impl_build_path, encoding="utf-8") as f:
+        content = f.read()
+
+    anchor = 'options.append("-I" + tikcpp_path)\n'
+    injected = f'    options.append("--gcc-toolchain={gcc_toolchain}")\n'
+    if injected not in content:
+        if anchor not in content:
+            raise ValueError(f"Failed to patch gcc toolchain, anchor not found in {impl_build_path}")
+        content = content.replace(anchor, anchor + injected, 1)
+
+    with open(impl_build_path, "w", encoding="utf-8") as f:
+        f.write(content)
+
+    logger.info("AscendC cmake template source: %s", source_cmake_dir)
+    logger.info("AscendC cmake template patched: %s", patched_cmake_dir)
+
+    return patched_cmake_dir
 
 
 def get_config():
@@ -124,18 +181,27 @@ class CustomOPCompiler():
     def exec_shell_command(self, command, stdout=None):
         """run exec shell"""
         try:
-            result = subprocess.run(command, stdout=stdout,
+            capture_output = stdout is None
+            result = subprocess.run(command,
+                                    stdout=subprocess.PIPE if capture_output else stdout,
                                     stderr=subprocess.STDOUT,
                                     shell=False,
                                     text=True,
                                     check=True)
+            if capture_output and result.stdout:
+                print(result.stdout, end="")
         except FileNotFoundError as e:
             logger.error("Command not found: %s", e)
             raise RuntimeError(f'Command not found: {e}') from e
         except subprocess.CalledProcessError as e:
-            logger.error("Run %s Command failed with return code %s: %s", command, e.returncode, e.output)
+            output = e.stdout or e.output or ""
+            if output:
+                print(output, end="")
+                tail = "\n".join(output.splitlines()[-200:])
+                logger.error("Command output tail:\n%s", tail)
+            logger.error("Run %s Command failed with return code %s", command, e.returncode)
             raise RuntimeError(
-                f"Run {command} Command failed with return code {e.returncode}: {e.output}"
+                f"Run {command} Command failed with return code {e.returncode}"
             ) from e
         return result
 
@@ -154,6 +220,15 @@ class CustomOPCompiler():
             logger.info("Force clean enabled, will clean build directory before compilation")
         else:
             logger.info("Incremental build enabled, keeping existing build artifacts")
+
+        gcc_toolchain = os.getenv("GCC_TOOLCHAIN")
+        if gcc_toolchain:
+            build_root = os.path.realpath(os.path.join(self.aclnn_src_path, "../../../build/ascendc"))
+            patched_cmake_dir = prepare_gcc_toolchain_cmake_dir(
+                self.args.ascend_cann_package_path, build_root, gcc_toolchain
+            )
+            build_args += f" --ascend_cmake_dir '{patched_cmake_dir}'"
+            logger.info("Using patched aclnn cmake dir: %s", patched_cmake_dir)
 
         if self.args.ascend_cann_package_path != "":
             cann_package_path = self.args.ascend_cann_package_path
@@ -198,6 +273,7 @@ class CustomOPCompiler():
     def compile(self):
         """compile op"""
         self.check_args()
+        self.init_config()
         self.compile_custom_op()
         self.install_custom_op()
 
