@@ -24,6 +24,7 @@ import sys
 import shutil
 import multiprocessing
 import subprocess
+import importlib.util
 from typing import List
 from pathlib import Path
 from setuptools import find_packages, setup
@@ -36,6 +37,20 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 package_name = "ms_custom_ops"
+
+
+def _load_prepare_gcc_toolchain_cmake_dir():
+    """Load the shared AscendC cmake patch helper without requiring scripts as a package."""
+    op_compiler_path = os.path.join(ROOT_DIR, "scripts", "op_compiler.py")
+    spec = importlib.util.spec_from_file_location("ms_custom_ops_op_compiler", op_compiler_path)
+    if spec is None or spec.loader is None:
+        raise ImportError(f"Cannot load op_compiler from {op_compiler_path}")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module.prepare_gcc_toolchain_cmake_dir
+
+
+prepare_gcc_toolchain_cmake_dir = _load_prepare_gcc_toolchain_cmake_dir()
 
 
 # =============================================================================
@@ -459,10 +474,21 @@ class CustomBuildExt(build_ext):
 
         try:
             # 构建编译命令，支持多种芯片版本
+            gcc_toolchain = os.getenv("GCC_TOOLCHAIN")
+            extra_build_args = ""
+            if gcc_toolchain:
+                patched_cmake_dir = prepare_gcc_toolchain_cmake_dir(
+                    self.ascend_home_path,
+                    cri_src_dir,
+                    gcc_toolchain,
+                )
+                extra_build_args += f" --ascend_cmake_dir '{patched_cmake_dir}'"
             build_cmd = (
                 f"source {self.env_script_path} && "
                 f"cd {cri_src_dir} && "
-                f"bash build.sh -c 'ascend910b;ascend910_93' --disable-check-compatible"
+                f"bash build.sh -c 'ascend910b;ascend910_93' --disable-check-compatible "
+                f"--ccache false --ops-compile-options '-std=c++17'"
+                f"{extra_build_args}"
             )
             result = subprocess.run(
                 build_cmd,
